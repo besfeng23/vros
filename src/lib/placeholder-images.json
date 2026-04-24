@@ -2,39 +2,39 @@
   "placeholderImages": [
     {
       "id": "hero-main",
-      "description": "Premium clinic interior with warm lighting",
-      "imageUrl": "https://picsum.photos/seed/ortiz1/1920/1080",
-      "imageHint": "luxury clinic"
+      "description": "Executive board room with city view",
+      "imageUrl": "https://picsum.photos/seed/harmony1/1920/1080",
+      "imageHint": "executive office"
     },
     {
-      "id": "treatment-skin",
-      "description": "Professional skincare treatment in progress",
-      "imageUrl": "https://picsum.photos/seed/ortiz2/800/600",
-      "imageHint": "dermatology treatment"
+      "id": "division-underground",
+      "description": "Industrial logistics and high-tech facility",
+      "imageUrl": "https://picsum.photos/seed/harmony2/800/600",
+      "imageHint": "industrial logistics"
     },
     {
-      "id": "treatment-laser",
-      "description": "Advanced medical laser equipment",
-      "imageUrl": "https://picsum.photos/seed/ortiz3/800/600",
-      "imageHint": "medical laser"
+      "id": "division-entertainment",
+      "description": "Premium media production studio",
+      "imageUrl": "https://picsum.photos/seed/harmony3/800/600",
+      "imageHint": "production studio"
     },
     {
-      "id": "doctor-profile",
-      "description": "Professional medical doctor portrait",
-      "imageUrl": "https://picsum.photos/seed/ortiz4/600/800",
-      "imageHint": "doctor portrait"
+      "id": "division-corporate",
+      "description": "Sleek glass skyscraper architecture",
+      "imageUrl": "https://picsum.photos/seed/harmony4/600/800",
+      "imageHint": "skyscraper"
     },
     {
-      "id": "branch-makati",
-      "description": "Modern clinic exterior in Makati",
-      "imageUrl": "https://picsum.photos/seed/ortiz5/800/600",
-      "imageHint": "modern building"
+      "id": "division-88",
+      "description": "Secured high-density data center",
+      "imageUrl": "https://picsum.photos/seed/harmony5/800/600",
+      "imageHint": "data center"
     },
     {
-      "id": "promo-banner",
-      "description": "Elegant beauty product flatlay",
-      "imageUrl": "https://picsum.photos/seed/ortiz6/1200/400",
-      "imageHint": "beauty skincare"
+      "id": "executive-portrait",
+      "description": "Discreet professional in shadows",
+      "imageUrl": "https://picsum.photos/seed/harmony6/1200/400",
+      "imageHint": "shrouded figure"
     }
   ]
 }

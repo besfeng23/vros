@@ -43,6 +43,10 @@ export const PROJECTS: Project[] = [
     status: 'Active',
     startDate: '2026-01-01',
     visibility: 'Internal',
-    createdAt: '2026-01-01'
+    createdAt: '2026-01-01',
+    createdBy: 'system',
+    ownerId: 'system',
+    sharedWith: [],
+    watcherIds: [],
   }
 ];

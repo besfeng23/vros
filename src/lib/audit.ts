@@ -1,6 +1,5 @@
-import { firestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { UserRole } from './types';
+import { Firestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { UserRole, DepartmentId } from './types';
 
 export interface AuditLogParams {
   userId: string;
@@ -8,20 +7,20 @@ export interface AuditLogParams {
   userRole: UserRole;
   action: string;
   details: string;
-  collection?: string;
-  docId?: string;
-  departmentId?: string;
+  scope: 'System' | 'Department' | 'Project' | 'Finance';
+  entityId?: string;
+  departmentId?: DepartmentId;
+  status: 'Success' | 'Warning' | 'Failure';
 }
 
 /**
  * Global Audit Logger
  * Use this to record any administrative or high-stakes action.
+ * Pass the firestore instance explicitly to avoid singleton issues.
  */
-export async function logActivity(params: AuditLogParams) {
-  if (!firestore) return;
-
+export async function logActivity(db: Firestore, params: AuditLogParams) {
   try {
-    await addDoc(collection(firestore, 'activityLogs'), {
+    await addDoc(collection(db, 'auditLogs'), {
       ...params,
       createdAt: serverTimestamp(),
     });

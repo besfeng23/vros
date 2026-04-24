@@ -1,10 +1,8 @@
-'use server';
+
 /**
- * @fileOverview A Genkit flow for summarizing patient inquiries.
+ * @fileOverview A Genkit flow for summarizing operational inquiries and stakeholder context.
  *
- * - summarizeInquiry - A function that processes and summarizes patient inquiries using AI.
- * - AdminInquirySummarizerInput - The input type for the summarizeInquiry function.
- * - AdminInquirySummarizerOutput - The return type for the summarizeInquiry function.
+ * - summarizeInquiry - A function that processes and synthesizes operational data using AI.
  */
 
 import { ai } from '@/ai/genkit';
@@ -13,7 +11,7 @@ import { z } from 'genkit';
 const AdminInquirySummarizerInputSchema = z.object({
   inquiryText: z
     .string()
-    .describe('The raw text content of the patient inquiry or feedback.'),
+    .describe('The raw text content of the operational inquiry, deal note, or stakeholder context.'),
 });
 export type AdminInquirySummarizerInput = z.infer<
   typeof AdminInquirySummarizerInputSchema
@@ -22,17 +20,17 @@ export type AdminInquirySummarizerInput = z.infer<
 const AdminInquirySummarizerOutputSchema = z.object({
   summary: z
     .string()
-    .describe('A concise, editorial-style summary of the patient inquiry.'),
+    .describe('A concise, executive-level summary of the intelligence.'),
   sentiment: z
     .enum(['positive', 'neutral', 'negative', 'urgent'])
-    .describe('The overall sentiment or urgency of the inquiry.'),
+    .describe('The overall strategic sentiment or operational urgency.'),
   keywords: z
     .array(z.string())
-    .describe('A list of key topics or entities mentioned in the inquiry.'),
+    .describe('A list of key entities, divisions, or protocols mentioned.'),
   recommendedAction: z
     .string()
     .describe(
-      'A brief, actionable recommendation for how clinic staff should respond or what steps to take.'
+      'A brief, actionable recommendation for executive response or divisional handoff.'
     ),
 });
 export type AdminInquirySummarizerOutput = z.infer<
@@ -49,17 +47,17 @@ const inquirySummarizerPrompt = ai.definePrompt({
   name: 'inquirySummarizerPrompt',
   input: { schema: AdminInquirySummarizerInputSchema },
   output: { schema: AdminInquirySummarizerOutputSchema },
-  prompt: `You are an AI assistant for Ortiz Clinic Philippines, specializing in summarizing patient inquiries and feedback.
-Your goal is to help clinic staff quickly understand the core message and respond efficiently, maintaining a premium, luxury-medical service experience.
+  prompt: `You are an AI assistant for Harmony OS, a premium enterprise operations platform. 
+You specialize in synthesizing operational intelligence, stakeholder inquiries, and deal context for an executive board.
 
-Analyze the following patient inquiry, keeping in mind Ortiz Clinic's brand identity: medically credible, polished, calm, and conversion-focused.
+The goal is to maintain absolute discretion, strategic precision, and institutional integrity.
 
-Inquiry:
+Analyze the following intelligence input:
 """
 {{{inquiryText}}}
 """
 
-Provide a concise summary, identify the overall sentiment (positive, neutral, negative, or urgent), extract key topics, and suggest a brief, actionable recommendation for the clinic staff.
+Provide a concise executive summary, identify the strategic sentiment (positive, neutral, negative, or urgent), extract key entities/divisions, and suggest a brief, actionable recommendation for the executive team.
 Ensure the output is formatted as JSON, adhering strictly to the provided output schema.`,
 });
 
@@ -72,7 +70,7 @@ const adminInquirySummarizerFlow = ai.defineFlow(
   async (input) => {
     const { output } = await inquirySummarizerPrompt(input);
     if (!output) {
-      throw new Error('Failed to summarize inquiry.');
+      throw new Error('Failed to synthesize intelligence.');
     }
     return output;
   }

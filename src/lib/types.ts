@@ -38,11 +38,27 @@ export type UserRole =
   | 'FieldRunner' 
   | 'Viewer';
 
-export type VisibilityLevel = 'Public' | 'Internal' | 'Confidential' | 'Restricted';
+export type VisibilityLevel = 'Public' | 'Internal' | 'Confidential' | 'Restricted' | 'Department' | 'Shared' | 'Private';
 
 export type ApprovalStatus = 'Pending' | 'Reviewing' | 'Approved' | 'Rejected' | 'Deferred';
 
 export type TaskStatus = 'Todo' | 'InProgress' | 'Blocked' | 'Review' | 'Done' | 'Cancelled';
+
+// --- Base Interfaces for Operational Integrity ---
+
+export interface OperationalRecord {
+  id: string;
+  createdAt: any; 
+  updatedAt?: any;
+  createdBy: string;
+  updatedBy?: string;
+  ownerId: string;
+  departmentId?: DepartmentId;
+  visibility: VisibilityLevel;
+  sharedWith: string[]; 
+  watcherIds: string[]; 
+  isArchived?: boolean;
+}
 
 // --- Core Interfaces ---
 
@@ -53,6 +69,7 @@ export interface StaffMember {
   role: UserRole;
   departmentId?: DepartmentId;
   createdAt: string;
+  status: 'Active' | 'Suspended' | 'Inactive';
 }
 
 export interface UserProfile {
@@ -75,8 +92,7 @@ export interface Department {
   color: string;
 }
 
-export interface Contact {
-  id: string;
+export interface Contact extends OperationalRecord {
   type: 'Person' | 'Entity';
   name: string;
   organizationId?: string;
@@ -85,50 +101,39 @@ export interface Contact {
   title?: string;
   tags: string[];
   notes?: string;
-  visibility: VisibilityLevel;
-  createdBy: string;
-  createdAt: string;
 }
 
-export interface Organization {
-  id: string;
+export interface Organization extends OperationalRecord {
   name: string;
   industry?: string;
   website?: string;
   address?: string;
   primaryContactId?: string;
   tier: 'Gold' | 'Silver' | 'Bronze' | 'Strategic';
-  createdAt: string;
 }
 
-export interface Project {
-  id: string;
+export interface Project extends OperationalRecord {
   name: string;
-  code: string; // e.g. "PRJ-001"
-  departmentId: DepartmentId;
+  code: string; 
   managerId: string;
   description: string;
   status: 'Planning' | 'Active' | 'Paused' | 'Completed' | 'Archived';
   startDate: string;
   endDate?: string;
-  visibility: VisibilityLevel;
   budget?: number;
-  createdAt: string;
 }
 
-export interface Deal {
-  id: string;
+export interface Deal extends OperationalRecord {
   title: string;
   organizationId: string;
   contactId?: string;
   value: number;
   currency: string;
-  stageId: string; // pipeline stage
+  pipelineStageId: string; 
   probability: number; // 0-100
   expectedClose: string;
   priority: 'Low' | 'Medium' | 'High' | 'Urgent';
   assignedTo: string;
-  createdAt: string;
 }
 
 export interface PipelineStage {
@@ -138,84 +143,71 @@ export interface PipelineStage {
   color: string;
 }
 
-export interface Case {
-  id: string;
+export interface Case extends OperationalRecord {
   subject: string;
-  departmentId: DepartmentId;
   type: 'Incident' | 'Inquiry' | 'Support' | 'Legal';
   status: 'New' | 'Open' | 'Resolved' | 'Closed';
   priority: 'P0' | 'P1' | 'P2' | 'P3';
   assignedTo?: string;
   userId: string; // Requester
   description: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
-export interface Task {
-  id: string;
+export interface Task extends OperationalRecord {
   title: string;
   description?: string;
   projectId?: string;
   caseId?: string;
   assignedTo: string;
+  secondaryOwnerId?: string;
   status: TaskStatus;
   priority: 'Normal' | 'High' | 'Urgent';
   dueDate?: string;
-  createdAt: string;
 }
 
-export interface Handoff {
-  id: string;
-  entityId: string; // ID of the project, case, etc.
-  fromDept: DepartmentId;
-  toDept: DepartmentId;
+export interface Handoff extends OperationalRecord {
+  entityId: string; 
+  entityType: 'Project' | 'Case' | 'Deal' | 'Task';
+  fromDepartmentId: DepartmentId;
+  toDepartmentId: DepartmentId;
   assignedBy: string;
   assignedTo: string;
   note: string;
   status: 'Pending' | 'Accepted' | 'Rejected';
-  createdAt: string;
 }
 
-export interface FileAsset {
-  id: string;
+export interface FileAsset extends OperationalRecord {
   name: string;
-  path: string; // GCS Path
+  path: string; 
   size: number;
   mimeType: string;
-  projectId?: string;
-  caseId?: string;
+  linkedRecordType?: 'Project' | 'Case' | 'Deal' | 'Organization' | 'Contact';
+  linkedRecordId?: string;
   isLocked: boolean;
-  visibility: VisibilityLevel;
   uploadedBy: string;
-  createdAt: string;
 }
 
-export interface FinanceEntry {
-  id: string;
+export interface FinanceEntry extends OperationalRecord {
   type: 'Income' | 'Expense' | 'Transfer';
   amount: number;
   currency: string;
   status: 'Pending' | 'Verified' | 'Reconciled' | 'Disputed';
-  departmentId: DepartmentId;
   projectId?: string;
   category: string;
   description: string;
   date: string;
   recordedBy: string;
-  createdAt: string;
 }
 
-export interface ApprovalRequest {
-  id: string;
+export interface ApprovalRequest extends OperationalRecord {
   entityId: string;
-  type: 'Budget' | 'Action' | 'Content' | 'Legal';
+  entityType: 'FinanceEntry' | 'Project' | 'Handoff' | 'Contract';
   requestorId: string;
-  approverId: string;
+  approverIds: string[]; 
   status: ApprovalStatus;
   comments: string;
-  createdAt: string;
-  decidedAt?: string;
+  decidedAt?: any;
+  decidedBy?: string;
 }
 
 export interface Comment {
@@ -225,7 +217,7 @@ export interface Comment {
   authorName: string;
   content: string;
   isInternal: boolean;
-  createdAt: string;
+  createdAt: any;
 }
 
 export interface AuditLog {
@@ -238,7 +230,17 @@ export interface AuditLog {
   scope: 'System' | 'Department' | 'Project' | 'Finance';
   entityId?: string;
   departmentId?: DepartmentId;
-  createdAt: string;
+  status: 'Success' | 'Warning' | 'Failure';
+  ipAddress?: string;
+  createdAt: any;
+}
+
+export interface ActivityLog {
+  id: string;
+  userId: string;
+  action: string;
+  departmentId?: DepartmentId;
+  createdAt: any;
 }
 
 export interface Notification {
@@ -249,7 +251,7 @@ export interface Notification {
   link?: string;
   isRead: boolean;
   type: 'Info' | 'Warning' | 'Alert' | 'Success';
-  createdAt: string;
+  createdAt: any;
 }
 
 export interface SavedView {
@@ -259,5 +261,5 @@ export interface SavedView {
   entityType: string;
   filters: Record<string, any>;
   isPublic: boolean;
-  createdAt: string;
+  createdAt: any;
 }

@@ -1,5 +1,5 @@
 /**
- * Production-grade logging abstraction for Ortiz Clinic.
+ * Production-grade logging abstraction for Harmony OS.
  * Prepared for GCP Cloud Logging integration.
  */
 
@@ -21,7 +21,7 @@ class ProductionLogger {
       message,
       timestamp: new Date().toISOString(),
       ...context,
-      service: 'ortiz-clinic-web',
+      service: 'harmony-os-web',
     };
 
     if (this.isProduction) {

@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 import { PROJECTS, DEPARTMENTS } from '@/lib/data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://harmony-os.app';
+  const baseUrl = 'https://harmony-os.net';
 
   const projectRoutes = PROJECTS.map((project: any) => ({
     url: `${baseUrl}/projects/${project.id}`,

@@ -134,7 +134,11 @@ service cloud.firestore {
     match /tasks/{taskId} {
       allow read: if isRecordVisible(resource.data);
       allow create: if isSignedIn();
-      allow update: if isRecordVisible(resource.data); // Anyone visible can usually update status/notes unless locked
+      allow update: if isSuperAdmin() || 
+                    hasRole('Executive') || 
+                    isOwner(resource.data) || 
+                    isDeptMember(resource.data.departmentId) || 
+                    request.auth.uid == resource.data.assignedTo;
       allow delete: if isSuperAdmin() || isOwner(resource.data);
     }
 
@@ -163,7 +167,7 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow update: if isSuperAdmin() ||
                     (hasRole('Executive') && (request.auth.uid in resource.data.approverIds)) ||
-                    (isOwner(resource.data) && resource.data.status == 'Pending'); // Owner can only update if still pending
+                    (isOwner(resource.data) && resource.data.status == 'Pending'); 
       allow delete: if isSuperAdmin();
     }
 
@@ -179,8 +183,8 @@ service cloud.firestore {
 
     match /auditLogs/{logId} {
       allow read: if isSuperAdmin() || hasRole('Executive');
-      allow create: if isSignedIn(); // System components can write
-      allow update, delete: if false; // Immutable
+      allow create: if isSuperAdmin(); // Restricted to SuperAdmin for now until server-side logic is implemented
+      allow update, delete: if false; 
     }
   }
 }
