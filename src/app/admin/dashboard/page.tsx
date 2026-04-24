@@ -1,3 +1,5 @@
+'use client';
+
 import { 
   TrendingUp, 
   Users, 
@@ -21,6 +23,15 @@ import {
   ArrowRightLeft,
   Search
 } from 'lucide-react';
+
+import { useFirebase } from '@/firebase/provider';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
 
 const MOCK_PIPELINE_HEALTH = [
   { division: 'Underground', health: 94, status: 'Stable' },
@@ -319,11 +330,4 @@ function LoadingState({ message }: { message: string }) {
   );
 }
 
-import { useFirebase } from '@/firebase/provider';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
