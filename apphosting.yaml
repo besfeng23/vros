@@ -1,0 +1,22 @@
+# Firebase App Hosting configuration for Harmony OS Production
+# https://firebase.google.com/docs/app-hosting/configure
+
+runConfig:
+  # Optimal for high-traffic premium operations
+  minInstances: 1
+  maxInstances: 10
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_BASE_URL
+    value: https://harmony-os.app
+  - variable: NODE_ENV
+    value: production
+
+# Secrets managed via GCP Secret Manager
+# secrets:
+#   - variable: STRIPE_SECRET_KEY
+#     secret: stripe-secret-key
+#   - variable: GEMINI_API_KEY
+#     secret: gemini-api-key

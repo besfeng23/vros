@@ -1,0 +1,40 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    /**
+     * Harmony OS Premium Operations Platform - Storage Rules
+     */
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getStaffData() {
+      return firestore.get(/databases/(default)/documents/staffMembers/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      let staffData = getStaffData();
+      return staffData != null && staffData.role in ['SuperAdmin', 'HQOperations'];
+    }
+
+    // Public Assets (Services, Promos, UI)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // User Private Data (Profile pics, documents)
+    match /users/{userId}/{allPaths=**} {
+      allow read: if request.auth.uid == userId || isAdmin();
+      allow write: if request.auth.uid == userId || isAdmin();
+    }
+
+    // Operational Vault (Enterprise Documents)
+    match /vault/{allPaths=**} {
+      allow read: if isAdmin() || getStaffData().role in ['BranchManager', 'Finance'];
+      allow write: if isAdmin();
+    }
+  }
+}

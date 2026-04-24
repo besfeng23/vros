@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "studio-7895933939-524ff"
+  },
+  "targets": {
+    "studio-7895933939-524ff": {
+      "hosting": {
+        "vrossing": [
+          "vrossing"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

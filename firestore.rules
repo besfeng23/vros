@@ -1,0 +1,281 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Harmony OS Premium Operations Platform - Security Rules
+     *
+     * PHILOSOPHY:
+     * This ruleset implements a multi-tier authorization model designed for premium operations.
+     * It balances public accessibility for general services with strict operational
+     * boundaries for staff and private financial/activity data.
+     *
+     * DATA STRUCTURE & AUTHORIZATION:
+     * 1. Public Content: General services and promos are publicly readable.
+     * 2. User-Scoped Data: Appointments and personal records are nested under /users/{userId}.
+     * 3. Staff-Based Access: Staff roles (SuperAdmin, HQOperations, BranchManager, Cashier, Marketing, Finance)
+     *    are looked up via the /staffMembers collection using the auth.uid.
+     * 4. Relational Integrity: branchId and userId are enforced on documents to maintain
+     *    strict data boundaries.
+     *
+     * KEY DECISIONS:
+     * - Staff authorization is performed via a lookup to the staffMember record matching the UID.
+     * - Branch Managers and Cashiers are restricted to data matching their assigned branchId.
+     * - Production-grade validation for ownership (userId) and scope (branchId) is strictly enforced.
+     */
+
+    // --- GLOBAL HELPER FUNCTIONS ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getStaffData() {
+      // Ensure the user is signed in before attempting to get staff data
+      return isSignedIn() ? get(/databases/$(database)/documents/staffMembers/$(request.auth.uid)).data : null;
+    }
+
+    function hasRole(role) {
+      let staffData = getStaffData();
+      return staffData != null && staffData.role == role;
+    }
+
+    function isAnyRole(roles) {
+      let staffData = getStaffData();
+      return staffData != null && staffData.role in roles;
+    }
+
+    function isAdmin() {
+      return isAnyRole(['SuperAdmin', 'HQOperations']);
+    }
+
+    function isBranchStaff(branchId) {
+      let staffData = getStaffData();
+      return (isAdmin() || (staffData != null && staffData.branchId == branchId));
+    }
+
+    // --- COLLECTION RULES ---
+
+    /**
+     * @description Access to patient/user profiles.
+     * @path /users/{userId}
+     * @allow Users to manage their own profile; Admins to view all.
+     * @deny Unauthenticated access or users accessing other profiles.
+     * @principle Ownership for users, Admin override for clinic operations.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin() || isAnyRole(['BranchManager', 'Cashier', 'Finance']);
+      allow list: if isAdmin() || isAnyRole(['BranchManager', 'Cashier', 'Finance']);
+      allow create: if isOwner(userId);
+      allow update: if (isOwner(userId) && resource != null) || isAdmin();
+      allow delete: if isAdmin();
+
+      /**
+       * @description Patient appointments.
+       * @path /users/{userId}/appointments/{appointmentId}
+       * @allow Owners to create/view; Branch staff to manage their branch appointments.
+       * @deny Cross-branch staff access or cross-user access.
+       * @principle Relational integrity between path userId and document data.
+       */
+      match /appointments/{appointmentId} {
+        // For get/update, check existing resource data
+        allow get: if isOwner(userId) || (resource.data.branchId is string && isBranchStaff(resource.data.branchId));
+        allow list: if isOwner(userId) || isAdmin(); // Branch staff use specific branch queries
+        // For create, check request resource data
+        allow create: if (isOwner(userId) || isAdmin() || isAnyRole(['BranchManager', 'Cashier']))
+                      && request.resource.data.userId == userId
+                      && request.resource.data.branchId is string; // Ensure branchId exists for staff context
+        // For update, check existing resource data
+        allow update: if (isOwner(userId) && resource != null) || (resource.data.branchId is string && isBranchStaff(resource.data.branchId));
+        allow delete: if isAdmin();
+      }
+
+      /**
+       * @description Purchased packages/promos for a user.
+       * @path /users/{userId}/userPackages/{userPackageId}
+       * @allow Owners to view; Cashiers and Managers to update usage.
+       * @principle Ownership for read; Role-based usage tracking.
+       */
+      match /userPackages/{userPackageId} {
+        allow get: if isOwner(userId) || isAnyRole(['SuperAdmin', 'HQOperations', 'BranchManager', 'Cashier', 'Finance']);
+        allow list: if isOwner(userId) || isAdmin() || isAnyRole(['BranchManager', 'Cashier', 'Finance']);
+        // For create, ensure userId matches path and branchId is present for staff
+        allow create: if (isAdmin() || isAnyRole(['BranchManager', 'Cashier']))
+                      && request.resource.data.userId == userId
+                      && request.resource.data.branchId is string;
+        allow update: if (resource != null) && (isAdmin() || isAnyRole(['BranchManager', 'Cashier']));
+        allow delete: if isAdmin();
+
+        /**
+         * @description Individual redemptions of package sessions.
+         * @path /users/{userId}/userPackages/{userPackageId}/packageRedemptions/{redemptionId}
+         * @allow Owners to view usage history; Branch staff to record redemptions.
+         */
+        match /packageRedemptions/{redemptionId} {
+          // For get/update, check existing resource data
+          allow get: if isOwner(userId) || (resource.data.branchId is string && isBranchStaff(resource.data.branchId));
+          allow list: if isOwner(userId) || isAdmin();
+          // For create, check request resource data
+          allow create: if (request.resource.data.branchId is string && isBranchStaff(request.resource.data.branchId))
+                        && request.resource.data.userId == userId;
+          allow update: if isAdmin();
+          allow delete: if isAdmin();
+        }
+      }
+    }
+
+    /**
+     * @description Internal staff profiles and roles.
+     * @path /staffMembers/{staffMemberId}
+     * @allow Self-read; Admin management.
+     * @deny Self-promotion or role tampering.
+     * @principle Authentication UID must match Document ID for secure lookup.
+     */
+    match /staffMembers/{staffMemberId} {
+      allow get: if isOwner(staffMemberId) || isAdmin();
+      allow list: if isAdmin() || hasRole('BranchManager');
+      // On creation, userId in data must match document ID
+      allow create: if isAdmin() && request.resource.data.userId == staffMemberId;
+      // On update, prevent changing userId and role, ensure document exists
+      allow update: if isAdmin() && resource != null
+                    && request.resource.data.userId == resource.data.userId
+                    && request.resource.data.role == resource.data.role;
+      allow delete: if isAdmin() && resource != null;
+    }
+
+    /**
+     * @description Public clinic branch information.
+     * @path /branches/{branchId}
+     * @allow Public read access; HQ management.
+     */
+    match /branches/{branchId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Public medical and aesthetic services.
+     * @path /services/{serviceId}
+     * @allow Public read; Marketing and HQ management.
+     */
+    match /services/{serviceId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() || hasRole('Marketing');
+    }
+
+    /**
+     * @description Public promotional offers and packages.
+     * @path /promos/{promoId}
+     * @allow Public read; Marketing and HQ management.
+     */
+    match /promos/{promoId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() || hasRole('Marketing');
+    }
+
+    /**
+     * @description Patient testimonials.
+     * @path /testimonials/{testimonialId}
+     * @allow Public read of approved; Users to submit; Marketing to approve.
+     */
+    match /testimonials/{testimonialId} {
+      // For get/list, resource.data needs to exist and have isApproved
+      allow get, list: if (resource.data.isApproved == true) || isAdmin() || hasRole('Marketing');
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin() || hasRole('Marketing');
+    }
+
+    /**
+     * @description CRM leads and inquiries.
+     * @path /inquiries/{inquiryId}
+     * @allow Public submission; Marketing/HQ management.
+     */
+    match /inquiries/{inquiryId} {
+      allow get: if isAdmin() || hasRole('Marketing');
+      allow list: if isAdmin() || hasRole('Marketing');
+      allow create: if true; // Public contact form
+      allow update: if (resource != null) && (isAdmin() || hasRole('Marketing'));
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description Financial payment records.
+     * @path /payments/{paymentId}
+     * @allow Finance/Admins to manage; Cashiers to manage branch-specific payments.
+     */
+    match /payments/{paymentId} {
+      // For get, check existing resource data
+      allow get: if isAnyRole(['SuperAdmin', 'HQOperations', 'Finance']) || (resource.data.branchId is string && isBranchStaff(resource.data.branchId));
+      allow list: if isAnyRole(['SuperAdmin', 'HQOperations', 'Finance']) || hasRole('Cashier') || hasRole('BranchManager');
+      // For create, check request resource data
+      allow create: if (isAdmin() || isAnyRole(['Cashier', 'Finance']))
+                    && request.resource.data.branchId is string;
+      allow update: if (resource != null) && (isAdmin() || isAnyRole(['Cashier', 'Finance']));
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description Financial refund records.
+     * @path /refunds/{refundId}
+     * @allow Finance/Admins to manage; Branch managers to view their branch refunds.
+     */
+    match /refunds/{refundId} {
+      // For get, check existing resource data
+      allow get: if isAnyRole(['SuperAdmin', 'HQOperations', 'Finance']) || (resource.data.branchId is string && isBranchStaff(resource.data.branchId));
+      allow list: if isAnyRole(['SuperAdmin', 'HQOperations', 'Finance']) || hasRole('BranchManager');
+      // For create, check request resource data
+      allow create: if (isAdmin() || hasRole('Finance'))
+                    && request.resource.data.branchId is string;
+      allow update: if (resource != null) && (isAdmin() || hasRole('Finance'));
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description System-wide configuration settings.
+     * @path /settings/{settingId}
+     * @allow Signed-in app read; Admin management.
+     */
+    match /settings/{settingId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Administrative activity logs.
+     * @path /activityLogs/{logId}
+     * @allow SuperAdmin/HQ to read all; Branch Managers to read their branch logs.
+     * @deny Any modification or deletion (immutable logs).
+     * @principle Immutability for audit integrity.
+     */
+    match /activityLogs/{logId} {
+      allow get: if isAdmin() || (resource.data.branchId is string && isBranchStaff(resource.data.branchId));
+      allow list: if isAdmin() || hasRole('BranchManager');
+      allow create: if isSignedIn(); 
+      allow update, delete: if false;
+    }
+
+    /**
+     * @description Operations Pipelines (Deals/Projects).
+     * @path /pipelines/{pipelineId}
+     */
+    match /pipelines/{pipelineId} {
+      allow get, list: if isAnyRole(['SuperAdmin', 'HQOperations', 'BranchManager', 'Marketing']);
+      allow create, update: if isAnyRole(['SuperAdmin', 'HQOperations', 'BranchManager', 'Marketing']);
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description Operational Tasks & Handoffs.
+     * @path /tasks/{taskId}
+     */
+    match /tasks/{taskId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,89 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%; /* Clean Slate White */
+    --foreground: 222 47% 11%;
+    
+    --card: 210 40% 98%;
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 210 40% 98%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 222 47% 11%; /* Executive Blue-Black */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11.2%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 160 84% 39%; /* Harmony Emerald */
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 160 84% 39%;
+    
+    --radius: 0.75rem; /* More modern rounded corners */
+  }
+
+  .dark {
+    --background: 222 47% 4%; /* Near Black Slate */
+    --foreground: 210 40% 98%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 222 47% 12%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 47% 12%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 47% 12%;
+    --input: 222 47% 12%;
+    --ring: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased selection:bg-accent/30;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline tracking-tight;
+  }
+}
+
+.text-berry {
+  color: hsl(var(--berry));
+}
+
+.bg-berry {
+  background-color: hsl(var(--berry));
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #D8BC78 0%, #B89C58 100%);
+}
+
+.ivory-glass {
+  background: rgba(249, 247, 242, 0.8);
+  backdrop-filter: blur(12px);
+}

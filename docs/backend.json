@@ -1,0 +1,1076 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Ortiz Clinic platform, typically a patient or public visitor, linked to an external authentication system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address, used for communication and login (via external auth).",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The user's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The user's last name."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The user's primary phone number."
+        },
+        "dateRegistered": {
+          "type": "string",
+          "description": "Timestamp when the user registered on the platform.",
+          "format": "date-time"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Timestamp of the user's last login.",
+          "format": "date-time"
+        },
+        "preferredBranchId": {
+          "type": "string",
+          "description": "Reference to the user's preferred clinic branch. (Relationship: Branch 1:N User)"
+        },
+        "contactPreference": {
+          "type": "string",
+          "description": "The user's preferred method of contact (e.g., 'email', 'phone', 'sms')."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "dateRegistered",
+        "lastLogin"
+      ]
+    },
+    "StaffMember": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StaffMember",
+      "type": "object",
+      "description": "Represents an internal staff member of Ortiz Clinic, with associated roles and access permissions.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the StaffMember entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User entity from the authentication system. (Relationship: User 1:1 StaffMember)"
+        },
+        "branchId": {
+          "type": "string",
+          "description": "Reference to the primary Branch this staff member is assigned to. (Relationship: Branch 1:N StaffMember)"
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the staff member (e.g., 'SuperAdmin', 'BranchManager', 'Cashier')."
+        },
+        "hireDate": {
+          "type": "string",
+          "description": "The date when the staff member was hired.",
+          "format": "date-time"
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Indicates if the staff member's account is currently active."
+        },
+        "employeeId": {
+          "type": "string",
+          "description": "An internal employee identifier."
+        },
+        "email": {
+          "type": "string",
+          "description": "The staff member's professional email address.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The staff member's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The staff member's last name."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "branchId",
+        "role",
+        "hireDate",
+        "isActive",
+        "employeeId",
+        "email",
+        "firstName",
+        "lastName"
+      ]
+    },
+    "Branch": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Branch",
+      "type": "object",
+      "description": "Represents a physical clinic branch of Ortiz Clinic, including its location and operational details.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Branch entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The official name of the clinic branch (e.g., 'Ortiz Clinic Makati')."
+        },
+        "address": {
+          "type": "string",
+          "description": "The street address of the branch."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city where the branch is located."
+        },
+        "province": {
+          "type": "string",
+          "description": "The province or state where the branch is located."
+        },
+        "zipCode": {
+          "type": "string",
+          "description": "The postal code of the branch."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The main contact phone number for the branch."
+        },
+        "email": {
+          "type": "string",
+          "description": "The contact email address for the branch.",
+          "format": "email"
+        },
+        "operatingHours": {
+          "type": "array",
+          "description": "An array of strings describing the branch's operating hours (e.g., ['Mon-Fri: 9AM-6PM', 'Sat: 9AM-1PM']).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mapEmbedUrl": {
+          "type": "string",
+          "description": "A URL for embedding a map of the branch's location (e.g., Google Maps embed link).",
+          "format": "uri"
+        },
+        "status": {
+          "type": "string",
+          "description": "The operational status of the branch (e.g., 'Active', 'Closed', 'Coming Soon')."
+        },
+        "serviceIds": {
+          "type": "array",
+          "description": "References to Services available at this branch. (Relationship: Service N:N Branch)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "address",
+        "city",
+        "province",
+        "phoneNumber",
+        "email",
+        "operatingHours",
+        "status"
+      ]
+    },
+    "Service": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Service",
+      "type": "object",
+      "description": "Defines a medical or aesthetic service offered by Ortiz Clinic, including its details and pricing.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Service entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the service (e.g., 'HydraFacial Deluxe')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the service, including benefits and procedure."
+        },
+        "basePrice": {
+          "type": "number",
+          "description": "The standard base price of the service."
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "The estimated duration of the service in minutes."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category the service belongs to (e.g., 'Facial', 'Laser', 'Injectables')."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of an image representing the service.",
+          "format": "uri"
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Indicates if the service should be highlighted as a featured offering."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the service (e.g., 'Active', 'Archived')."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "basePrice",
+        "durationMinutes",
+        "category",
+        "status"
+      ]
+    },
+    "Promo": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Promo",
+      "type": "object",
+      "description": "Represents a promotional offer or package offered by Ortiz Clinic.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Promo entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the promotion or package (e.g., 'Summer Glow Package')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the promotion or what the package includes."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of promotion (e.g., 'Discount', 'Package', 'Voucher')."
+        },
+        "price": {
+          "type": "number",
+          "description": "The special price of the promo/package, if applicable."
+        },
+        "discountPercentage": {
+          "type": "number",
+          "description": "The percentage discount offered, if applicable."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date when the promotion becomes active.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The date when the promotion expires.",
+          "format": "date-time"
+        },
+        "termsAndConditions": {
+          "type": "string",
+          "description": "Specific terms and conditions for the promotion."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of an image for marketing the promotion.",
+          "format": "uri"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the promotion (e.g., 'Active', 'Expired', 'Upcoming')."
+        },
+        "serviceIds": {
+          "type": "array",
+          "description": "References to Services included in this promo. (Relationship: Service N:N Promo)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "branchIds": {
+          "type": "array",
+          "description": "References to Branches where this promo is valid. (Relationship: Branch N:N Promo)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "type",
+        "startDate",
+        "endDate",
+        "status"
+      ]
+    },
+    "Inquiry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Inquiry",
+      "type": "object",
+      "description": "Records inquiries or leads submitted by prospective or existing patients.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Inquiry entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the person submitting the inquiry."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the inquirer.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The phone number of the inquirer."
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject line of the inquiry."
+        },
+        "message": {
+          "type": "string",
+          "description": "The detailed message or question from the inquirer."
+        },
+        "dateReceived": {
+          "type": "string",
+          "description": "Timestamp when the inquiry was received.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the inquiry (e.g., 'New', 'Pending', 'Responded', 'Closed')."
+        },
+        "source": {
+          "type": "string",
+          "description": "The source from which the inquiry originated (e.g., 'Website Contact Form', 'Homepage CTA')."
+        },
+        "assignedToStaffId": {
+          "type": "string",
+          "description": "Optional reference to the StaffMember currently assigned to handle this inquiry. (Relationship: StaffMember 1:N Inquiry)"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Internal notes by staff regarding the inquiry and its resolution."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "phone",
+        "subject",
+        "message",
+        "dateReceived",
+        "status",
+        "source"
+      ]
+    },
+    "Appointment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Appointment",
+      "type": "object",
+      "description": "Stores details about a patient's scheduled appointment at one of the clinic branches.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Appointment entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who booked the appointment. (Relationship: User 1:N Appointment)"
+        },
+        "branchId": {
+          "type": "string",
+          "description": "Reference to the Branch where the appointment is scheduled. (Relationship: Branch 1:N Appointment)"
+        },
+        "serviceIds": {
+          "type": "array",
+          "description": "References to Services booked for this appointment. (Relationship: Service N:N Appointment)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "promoId": {
+          "type": "string",
+          "description": "Optional reference to a Promo applied to this appointment. (Relationship: Promo 1:N Appointment)"
+        },
+        "appointmentDateTime": {
+          "type": "string",
+          "description": "The exact date and time of the appointment.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the appointment (e.g., 'Pending', 'Confirmed', 'Completed', 'Cancelled', 'No-Show')."
+        },
+        "patientNotes": {
+          "type": "string",
+          "description": "Notes provided by the patient during the booking process."
+        },
+        "clinicNotes": {
+          "type": "string",
+          "description": "Internal notes by clinic staff regarding the appointment."
+        },
+        "bookedByStaffId": {
+          "type": "string",
+          "description": "Optional reference to the StaffMember if the appointment was booked by staff on behalf of a user. (Relationship: StaffMember 1:N Appointment)"
+        },
+        "paymentId": {
+          "type": "string",
+          "description": "Optional reference to the Payment associated with this appointment. (Relationship: Payment 1:1 Appointment)"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "branchId",
+        "serviceIds",
+        "appointmentDateTime",
+        "status"
+      ]
+    },
+    "Testimonial": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Testimonial",
+      "type": "object",
+      "description": "Contains patient testimonials or reviews, used for credibility and marketing.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Testimonial entity."
+        },
+        "authorName": {
+          "type": "string",
+          "description": "The name of the person who gave the testimonial (can be anonymized)."
+        },
+        "authorLocation": {
+          "type": "string",
+          "description": "The location or city of the testimonial's author."
+        },
+        "quote": {
+          "type": "string",
+          "description": "The actual text of the testimonial."
+        },
+        "rating": {
+          "type": "number",
+          "description": "The star rating given by the author (e.g., 1-5 scale)."
+        },
+        "dateSubmitted": {
+          "type": "string",
+          "description": "Timestamp when the testimonial was submitted.",
+          "format": "date-time"
+        },
+        "isApproved": {
+          "type": "boolean",
+          "description": "Indicates if the testimonial has been reviewed and approved for public display."
+        },
+        "featuredOnHomepage": {
+          "type": "boolean",
+          "description": "Indicates if the testimonial should be prominently displayed on the homepage."
+        },
+        "serviceIds": {
+          "type": "array",
+          "description": "References to Services mentioned or related to the testimonial. (Relationship: Service N:N Testimonial)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "authorName",
+        "quote",
+        "rating",
+        "dateSubmitted",
+        "isApproved"
+      ]
+    },
+    "Payment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Payment",
+      "type": "object",
+      "description": "Records financial transactions related to services, packages, or appointments.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Payment entity."
+        },
+        "appointmentId": {
+          "type": "string",
+          "description": "Reference to the Appointment this payment is for. (Relationship: Appointment 1:1 Payment)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who made the payment. (Relationship: User 1:N Payment)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The total monetary amount of the payment."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the payment (e.g., 'PHP', 'USD')."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "The method used for the payment (e.g., 'Credit Card', 'Gcash', 'SpeedyPay', 'eMango')."
+        },
+        "transactionDate": {
+          "type": "string",
+          "description": "Timestamp when the payment transaction occurred.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the payment (e.g., 'Pending', 'Completed', 'Failed', 'Refunded')."
+        },
+        "referenceNumber": {
+          "type": "string",
+          "description": "The transaction ID or reference number from the payment gateway or internal system."
+        },
+        "processedByStaffId": {
+          "type": "string",
+          "description": "Optional reference to the StaffMember who processed or recorded this payment. (Relationship: StaffMember 1:N Payment)"
+        }
+      },
+      "required": [
+        "id",
+        "appointmentId",
+        "userId",
+        "amount",
+        "currency",
+        "paymentMethod",
+        "transactionDate",
+        "status",
+        "referenceNumber"
+      ]
+    },
+    "Refund": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Refund",
+      "type": "object",
+      "description": "Manages details for refund transactions issued to patients.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Refund entity."
+        },
+        "paymentId": {
+          "type": "string",
+          "description": "Reference to the original Payment entity that this refund is associated with. (Relationship: Payment 1:1 Refund)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User receiving the refund. (Relationship: User 1:N Refund)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The monetary amount that was refunded."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the refund (e.g., 'PHP', 'USD')."
+        },
+        "reason": {
+          "type": "string",
+          "description": "The reason provided for initiating the refund."
+        },
+        "refundDate": {
+          "type": "string",
+          "description": "Timestamp when the refund transaction occurred or was completed.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the refund (e.g., 'Pending', 'Completed', 'Failed')."
+        },
+        "referenceNumber": {
+          "type": "string",
+          "description": "The transaction ID or reference number for the refund from the payment gateway or internal system."
+        },
+        "processedByStaffId": {
+          "type": "string",
+          "description": "Reference to the StaffMember who initiated or processed this refund. (Relationship: StaffMember 1:N Refund)"
+        }
+      },
+      "required": [
+        "id",
+        "paymentId",
+        "userId",
+        "amount",
+        "currency",
+        "reason",
+        "refundDate",
+        "status",
+        "referenceNumber"
+      ]
+    },
+    "UserPackage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserPackage",
+      "type": "object",
+      "description": "Tracks a specific package or promotion purchased by a user, including its usage and expiry.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserPackage entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who purchased this package. (Relationship: User 1:N UserPackage)"
+        },
+        "promoId": {
+          "type": "string",
+          "description": "Reference to the Promo entity that represents the purchased package. (Relationship: Promo 1:N UserPackage)"
+        },
+        "purchaseDate": {
+          "type": "string",
+          "description": "Timestamp when the package was purchased by the user.",
+          "format": "date-time"
+        },
+        "expiryDate": {
+          "type": "string",
+          "description": "The date when the package or promotion expires.",
+          "format": "date-time"
+        },
+        "totalUses": {
+          "type": "number",
+          "description": "The total number of uses, sessions, or services included in the package."
+        },
+        "remainingUses": {
+          "type": "number",
+          "description": "The current number of uses, sessions, or services remaining in the package."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the user's package (e.g., 'Active', 'Expired', 'Fully Redeemed', 'Suspended')."
+        },
+        "purchasePaymentId": {
+          "type": "string",
+          "description": "Reference to the Payment entity for the initial purchase of this package. (Relationship: Payment 1:1 UserPackage)"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "promoId",
+        "purchaseDate",
+        "expiryDate",
+        "totalUses",
+        "remainingUses",
+        "status",
+        "purchasePaymentId"
+      ]
+    },
+    "PackageRedemption": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PackageRedemption",
+      "type": "object",
+      "description": "Records individual instances of a user redeeming a service or session from their purchased package.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the PackageRedemption entity."
+        },
+        "userPackageId": {
+          "type": "string",
+          "description": "Reference to the UserPackage entity from which this redemption is made. (Relationship: UserPackage 1:N PackageRedemption)"
+        },
+        "appointmentId": {
+          "type": "string",
+          "description": "Reference to the specific Appointment entity during which this redemption occurred. (Relationship: Appointment 1:1 PackageRedemption)"
+        },
+        "serviceId": {
+          "type": "string",
+          "description": "Reference to the specific Service entity that was redeemed in this instance. (Relationship: Service 1:N PackageRedemption)"
+        },
+        "redemptionDate": {
+          "type": "string",
+          "description": "Timestamp when the redemption occurred.",
+          "format": "date-time"
+        },
+        "branchId": {
+          "type": "string",
+          "description": "Reference to the Branch where this redemption took place. (Relationship: Branch 1:N PackageRedemption)"
+        },
+        "redeemedByStaffId": {
+          "type": "string",
+          "description": "Reference to the StaffMember who handled or processed this redemption. (Relationship: StaffMember 1:N PackageRedemption)"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Any specific notes related to this individual package redemption."
+        }
+      },
+      "required": [
+        "id",
+        "userPackageId",
+        "appointmentId",
+        "serviceId",
+        "redemptionDate",
+        "branchId",
+        "redeemedByStaffId"
+      ]
+    },
+    "AuditLog": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AuditLog",
+      "type": "object",
+      "description": "Records significant actions performed by staff members within the administrative backend for auditing purposes.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AuditLog entry."
+        },
+        "staffMemberId": {
+          "type": "string",
+          "description": "Reference to the StaffMember who performed the action. (Relationship: StaffMember 1:N AuditLog)"
+        },
+        "action": {
+          "type": "string",
+          "description": "A description of the action performed (e.g., 'Created Service', 'Updated Appointment Status')."
+        },
+        "entityType": {
+          "type": "string",
+          "description": "The type of entity that was affected by the action (e.g., 'Service', 'Appointment', 'Inquiry')."
+        },
+        "entityId": {
+          "type": "string",
+          "description": "The ID of the specific entity instance that was affected."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp when the action was performed.",
+          "format": "date-time"
+        },
+        "details": {
+          "type": "string",
+          "description": "Additional details about the action, potentially including 'before' and 'after' states or specific parameters (can be a JSON string)."
+        }
+      },
+      "required": [
+        "id",
+        "staffMemberId",
+        "action",
+        "entityType",
+        "entityId",
+        "timestamp"
+      ]
+    },
+    "Settings": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Settings",
+      "type": "object",
+      "description": "Stores various application-wide or clinic-wide configuration settings.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Setting entity (e.g., 'general_contact_email', 'homepage_hero_text')."
+        },
+        "key": {
+          "type": "string",
+          "description": "The unique key identifying the specific setting."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the setting. Can be a simple string or a stringified JSON object for complex configurations."
+        },
+        "description": {
+          "type": "string",
+          "description": "A clear description of what this setting controls or represents."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Timestamp of the last time this setting was updated.",
+          "format": "date-time"
+        },
+        "updatedByStaffId": {
+          "type": "string",
+          "description": "Reference to the StaffMember who last updated this setting. (Relationship: StaffMember 1:N Settings)"
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "value",
+        "description",
+        "lastUpdated"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores patient/public user profiles. Each document ID is the Firebase Auth UID. Access: Users can read/write their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, matching their Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/staffMembers/{staffMemberId}",
+        "definition": {
+          "entityName": "StaffMember",
+          "schema": {
+            "$ref": "#/backend/entities/StaffMember"
+          },
+          "description": "Stores internal staff member profiles, their assigned role, and primary branch. CRITICAL: The `staffMemberId` MUST be equal to the staff member's Firebase Authentication UID (`request.auth.uid`) to facilitate atomic DBAC authorization lookups. Includes denormalized 'role' and 'branchId' for security rules.",
+          "params": [
+            {
+              "name": "staffMemberId",
+              "description": "The unique identifier for the staff member, matching their Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/branches/{branchId}",
+        "definition": {
+          "entityName": "Branch",
+          "schema": {
+            "$ref": "#/backend/entities/Branch"
+          },
+          "description": "Stores publicly viewable clinic branch information, including location, contact, and operating hours. Managed by SuperAdmin/HQ staff. Public read access.",
+          "params": [
+            {
+              "name": "branchId",
+              "description": "The unique identifier for the clinic branch."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/services/{serviceId}",
+        "definition": {
+          "entityName": "Service",
+          "schema": {
+            "$ref": "#/backend/entities/Service"
+          },
+          "description": "Stores publicly viewable details and pricing for medical services offered. Managed by SuperAdmin/HQ/Marketing staff. Public read access.",
+          "params": [
+            {
+              "name": "serviceId",
+              "description": "The unique identifier for the service."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/promos/{promoId}",
+        "definition": {
+          "entityName": "Promo",
+          "schema": {
+            "$ref": "#/backend/entities/Promo"
+          },
+          "description": "Stores publicly viewable details for promotions and packages. Managed by SuperAdmin/HQ/Marketing staff. Public read access.",
+          "params": [
+            {
+              "name": "promoId",
+              "description": "The unique identifier for the promotion or package."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/testimonials/{testimonialId}",
+        "definition": {
+          "entityName": "Testimonial",
+          "schema": {
+            "$ref": "#/backend/entities/Testimonial"
+          },
+          "description": "Stores patient testimonials, publicly visible if `isApproved` is true. Managed by SuperAdmin/HQ/Marketing staff. Public read access for approved testimonials.",
+          "params": [
+            {
+              "name": "testimonialId",
+              "description": "The unique identifier for the testimonial."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/settings/{settingId}",
+        "definition": {
+          "entityName": "Settings",
+          "schema": {
+            "$ref": "#/backend/entities/Settings"
+          },
+          "description": "Stores application-wide configuration settings. Includes denormalized `updatedByStaffId` and `updatedByStaffBranchId` (derived from the updating staff member) for audit and access control. Read by app, write by SuperAdmin/HQ staff.",
+          "params": [
+            {
+              "name": "settingId",
+              "description": "The unique identifier for a specific setting (e.g., 'general_contact_email')."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/inquiries/{inquiryId}",
+        "definition": {
+          "entityName": "Inquiry",
+          "schema": {
+            "$ref": "#/backend/entities/Inquiry"
+          },
+          "description": "Records patient inquiries or leads. Managed by HQ/Marketing staff. Includes `assignedToStaffId` for task assignment.",
+          "params": [
+            {
+              "name": "inquiryId",
+              "description": "The unique identifier for the inquiry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/auditLogs/{auditLogId}",
+        "definition": {
+          "entityName": "AuditLog",
+          "schema": {
+            "$ref": "#/backend/entities/AuditLog"
+          },
+          "description": "Records significant actions performed by staff members for auditing. Includes denormalized `staffMemberId` and `staffBranchId` (derived from the performing staff member) for authorization independence and QAPs for branch-specific reports. Read by SuperAdmin/HQ; Branch Managers can read logs for their branch.",
+          "params": [
+            {
+              "name": "auditLogId",
+              "description": "The unique identifier for the audit log entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/appointments/{appointmentId}",
+        "definition": {
+          "entityName": "Appointment",
+          "schema": {
+            "$ref": "#/backend/entities/Appointment"
+          },
+          "description": "Stores appointments booked by a specific user. Includes denormalized `branchId` (from the scheduled branch) and `userId` (implicit from path) for authorization independence and QAPs (e.g., appointments by branch). Users can manage their own appointments; SuperAdmin/HQ can manage all; Branch Managers can manage appointments for their branch.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who booked the appointment."
+            },
+            {
+              "name": "appointmentId",
+              "description": "The unique identifier for the appointment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/userPackages/{userPackageId}",
+        "definition": {
+          "entityName": "UserPackage",
+          "schema": {
+            "$ref": "#/backend/entities/UserPackage"
+          },
+          "description": "Tracks a specific package purchased by a user, including its balance and expiry. Includes denormalized `userId` (implicit from path) for authorization independence. Users can view their own packages; SuperAdmin/HQ can manage all; Branch Managers/Cashiers can manage packages relevant to their branch's redemptions.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who purchased the package."
+            },
+            {
+              "name": "userPackageId",
+              "description": "The unique identifier for the purchased user package."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/userPackages/{userPackageId}/packageRedemptions/{redemptionId}",
+        "definition": {
+          "entityName": "PackageRedemption",
+          "schema": {
+            "$ref": "#/backend/entities/PackageRedemption"
+          },
+          "description": "Records individual instances of a user redeeming a service from their purchased package. Includes denormalized `branchId`, `redeemedByStaffId`, and `userId` (implicit from path) for authorization independence and QAPs. Users can view their own redemptions; SuperAdmin/HQ can manage all; Branch Managers/Cashiers can manage redemptions for their branch.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user whose package was redeemed."
+            },
+            {
+              "name": "userPackageId",
+              "description": "The unique identifier for the parent user package."
+            },
+            {
+              "name": "redemptionId",
+              "description": "The unique identifier for this specific package redemption event."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/payments/{paymentId}",
+        "definition": {
+          "entityName": "Payment",
+          "schema": {
+            "$ref": "#/backend/entities/Payment"
+          },
+          "description": "Records financial transactions. Includes denormalized `userId` (payer) and `branchId` (from associated appointment) for authorization independence and QAPs (e.g., payments by branch/status). Managed by Finance/Cashier roles; SuperAdmin/HQ can manage all; Cashiers can manage payments for their assigned branch.",
+          "params": [
+            {
+              "name": "paymentId",
+              "description": "The unique identifier for the payment transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/refunds/{refundId}",
+        "definition": {
+          "entityName": "Refund",
+          "schema": {
+            "$ref": "#/backend/entities/Refund"
+          },
+          "description": "Manages details for refund transactions. Includes denormalized `userId` (recipient) and `branchId` (from associated payment/appointment) for authorization independence and QAPs (e.g., refunds by branch/status). Managed by Finance/Cashier roles; SuperAdmin/HQ can manage all; Cashiers can manage refunds for their assigned branch.",
+          "params": [
+            {
+              "name": "refundId",
+              "description": "The unique identifier for the refund transaction."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure for Ortiz Clinic is designed with a strong emphasis on Authorization Independence, Structural Segregation, and Query as a Proxy (QAP) principles, crucial for a secure, scalable, and debuggable premium operations backend. \n\n**Authorization Independence via Denormalization:**\n\nTo eliminate hierarchical authorization dependencies and complex `get()` calls in security rules, key authorization contexts are denormalized directly into the relevant documents:\n\n1.  **Staff Roles and Branch Association:** The `/staffMembers/{staffMemberId}` collection (where `staffMemberId` is `request.auth.uid`) holds the `role` and `branchId` for each authenticated staff member. This allows security rules to perform a single, atomic self-lookup (`get(/staffMembers/request.auth.uid)`) to determine the staff's permissions and assigned branch. This avoids chaining `get()` calls across multiple documents for authorization.\n2.  **Transactional Data (Appointments, Payments, Refunds, Package Redemptions):**\n    *   `Appointment` documents, stored under `/users/{userId}/appointments/{appointmentId}`, explicitly include the `branchId` where the appointment is scheduled. This allows Branch Managers to access only appointments relevant to their branch without needing to `get()` the parent `User` or `Branch` document for authorization.\n    *   `Payment` and `Refund` documents (in their respective top-level collections) are enhanced with a denormalized `branchId` (derived from the associated `Appointment` or `UserPackage` at creation). This is critical for Cashiers and Finance roles, allowing them to manage transactions strictly within their operational scope without complex lookups.\n    *   `PackageRedemption` documents, nested under `/users/{userId}/userPackages/{userPackageId}/packageRedemptions/{redemptionId}`, include `branchId` and `redeemedByStaffId`. This ensures that Branch Managers can track redemptions at their specific branch directly within the document, and the system knows which staff member processed it.\n3.  **Audit Logs:** Each `AuditLog` document in `/auditLogs/{logId}` includes the `staffBranchId` of the staff member who performed the action. This enables branch-specific auditing and reporting without requiring a `get()` call to the `StaffMember` document for each log entry.\n\nThis denormalization strategy ensures that security rules can evaluate access rights by inspecting only the `request` and `resource.data` objects, making rules simpler, more performant, and less prone to transaction/batch failures caused by read conflicts during rule evaluation.\n\n**Query as a Proxy (QAPs) Support:**\n\nStructural segregation and denormalization are designed to support efficient QAPs for the required dashboards and filters:\n\n1.  **Collection Segregation:** Public-facing entities (`branches`, `services`, `promos`, `testimonials`) are in top-level collections, easily queryable by the public. Private, user-specific data (`appointments`, `userPackages`, `packageRedemptions`) are nested under `/users/{userId}`, allowing easy lookup for individual users. Admin-managed operational data (`inquiries`, `payments`, `refunds`, `auditLogs`, `settings`) are in top-level collections for centralized management and querying by authorized staff.\n2.  **Branch-Specific Access:** The denormalization of `branchId` into `Appointment`, `Payment`, `Refund`, `PackageRedemption`, and `AuditLog` documents directly enables QAPs for branch managers. They can perform `list` operations (e.g., 'appointments by branch', 'payments by status for my branch', 'package redemptions for my branch') by simply querying on the `branchId` field. This aligns perfectly with Firestore's query capabilities and simplifies security rules for read access based on `request.auth.uid` and the staff member's assigned `branchId` (retrieved once).\n3.  **Status-Based Filtering:** Entities like `Inquiry`, `Promo`, `Payment`, and `Refund` have a dedicated `status` field, allowing for direct filtering to power dashboards such as 'pending inquiries', 'promo conversions', 'pending payments', and 'pending refunds' with simple Firestore queries (e.g., `where('status', '==', 'Pending')`).\n\nThis robust structure facilitates clear security policies, minimizes rule complexity, and optimizes data retrieval for various user roles and dashboard requirements, laying a strong foundation for a production-grade application."
+  }
+}

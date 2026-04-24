@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-main",
+      "description": "Premium clinic interior with warm lighting",
+      "imageUrl": "https://picsum.photos/seed/ortiz1/1920/1080",
+      "imageHint": "luxury clinic"
+    },
+    {
+      "id": "treatment-skin",
+      "description": "Professional skincare treatment in progress",
+      "imageUrl": "https://picsum.photos/seed/ortiz2/800/600",
+      "imageHint": "dermatology treatment"
+    },
+    {
+      "id": "treatment-laser",
+      "description": "Advanced medical laser equipment",
+      "imageUrl": "https://picsum.photos/seed/ortiz3/800/600",
+      "imageHint": "medical laser"
+    },
+    {
+      "id": "doctor-profile",
+      "description": "Professional medical doctor portrait",
+      "imageUrl": "https://picsum.photos/seed/ortiz4/600/800",
+      "imageHint": "doctor portrait"
+    },
+    {
+      "id": "branch-makati",
+      "description": "Modern clinic exterior in Makati",
+      "imageUrl": "https://picsum.photos/seed/ortiz5/800/600",
+      "imageHint": "modern building"
+    },
+    {
+      "id": "promo-banner",
+      "description": "Elegant beauty product flatlay",
+      "imageUrl": "https://picsum.photos/seed/ortiz6/1200/400",
+      "imageHint": "beauty skincare"
+    }
+  ]
+}
