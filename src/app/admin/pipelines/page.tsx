@@ -1,123 +1,110 @@
+
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  MoreVertical, 
-  Plus, 
-  Search, 
-  Filter, 
-  ChevronRight, 
-  Calendar, 
-  User, 
-  DollarSign,
-  Clock
-} from 'lucide-react';
+import React from 'react';
+import { Layers, Search, Filter, Plus, Clock, TrendingUp, AlertCircle, MoreVertical } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-
-const COLUMNS = [
-  { id: 'lead', title: 'New Leads', color: 'bg-slate-200' },
-  { id: 'discovery', title: 'Discovery', color: 'bg-emerald-200' },
-  { id: 'negotiation', title: 'Negotiation', color: 'bg-emerald-400' },
-  { id: 'fulfillment', title: 'Fulfillment', color: 'bg-emerald-600' },
-  { id: 'closed', title: 'Operationalized', color: 'bg-slate-900' },
-];
-
-const MOCK_DEALS = [
-  { id: 'd1', title: 'Enterprise Hub Setup', client: 'Acme Corp', value: '₱450k', stage: 'negotiation', owner: 'Joven', priority: 'High' },
-  { id: 'd2', title: 'Branch Network License', client: 'Global Retail', value: '₱1.2M', stage: 'lead', owner: 'Patty', priority: 'High' },
-  { id: 'd3', title: 'Custom CRM Integration', client: 'Medical Group', value: '₱280k', stage: 'fulfillment', owner: 'Admin', priority: 'Medium' },
-  { id: 'd4', title: 'HQ Security Audit', client: 'Internal', value: '₱0', stage: 'discovery', owner: 'Patty', priority: 'Low' },
-  { id: 'd5', title: 'Universal Cloud Sync', client: 'BGC Hub', value: '₱150k', stage: 'lead', owner: 'Joven', priority: 'Medium' },
-];
+import { Badge } from '@/components/ui/badge';
 
 export default function PipelinesPage() {
-  const [deals, setDeals] = useState(MOCK_DEALS);
+  const divisions = [
+    { name: 'Underground', health: 94, deals: 8, value: '₱42.5M' },
+    { name: 'Entertainment', health: 88, deals: 12, value: '₱28.2M' },
+    { name: 'Corporate', health: 98, deals: 6, value: '₱65.1M' },
+    { name: '88 Dept', health: 92, deals: 4, value: 'Confidential' },
+  ];
+
+  const stages = [
+    { name: 'Prospecting', count: 12, value: '₱120M' },
+    { name: 'Qualified', count: 8, value: '₱85M' },
+    { name: 'Strategic Deep-Dive', count: 5, value: '₱42M' },
+    { name: 'Negotiation', count: 3, value: '₱18M' },
+    { name: 'Closed-Secured', count: 24, value: '₱1.2B' },
+  ];
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-12 pb-20 bg-[#050505] min-h-screen -m-6 lg:-m-16 p-6 lg:p-16 text-white">
       <div className="flex justify-between items-end">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-headline tracking-tight text-slate-900">Operations Pipeline</h1>
-          <p className="text-slate-500 text-[10px] tracking-[0.3em] uppercase font-bold">Global Deal Flow & Execution Tracker</p>
+        <div className="space-y-2">
+          <h1 className="text-5xl font-headline tracking-tighter">Operations Pipelines</h1>
+          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.4em]">Multi-Division Deal & Initiative Velocity</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-            <input 
-              placeholder="Search Deals..." 
-              className="pl-10 h-10 w-64 border border-slate-100 bg-white text-[10px] font-bold uppercase tracking-widest focus:ring-emerald-500 focus:outline-none"
-            />
-          </div>
-          <Button className="h-10 px-6 rounded-none bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest transition-all">
-            <Plus size={14} className="mr-2" />
-            New Deal
-          </Button>
+        <div className="flex space-x-4">
+           <Button variant="outline" className="h-14 rounded-none border-white/10 text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] px-8">
+              Configure Stages
+           </Button>
+           <Button className="h-14 rounded-none bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-[0.3em] px-10 transition-all shadow-xl shadow-emerald-900/20">
+              <Plus size={16} className="mr-2" />
+              New Stream
+           </Button>
         </div>
       </div>
 
-      {/* Kanban Board */}
-      <div className="flex space-x-6 overflow-x-auto pb-12 custom-scrollbar min-h-[700px]">
-        {COLUMNS.map((column) => (
-          <div key={column.id} className="w-80 shrink-0 space-y-6">
-            <div className="flex items-center justify-between pb-2 border-b-2 border-slate-100">
-               <div className="flex items-center space-x-3">
-                  <div className={cn("w-2 h-2 rounded-full", column.color)} />
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">{column.title}</h3>
-                  <Badge variant="outline" className="text-[8px] px-2 py-0 border-slate-100 text-slate-300 rounded-none">
-                    {deals.filter(d => d.stage === column.id).length}
-                  </Badge>
-               </div>
-               <button className="text-slate-300 hover:text-slate-600">
-                  <MoreVertical size={14} />
-               </button>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+         {divisions.map(div => (
+           <Card key={div.name} className="bg-white/[0.02] border-white/5 rounded-none p-10 space-y-8 hover:bg-white/[0.04] transition-all group">
+              <div className="flex justify-between items-start">
+                 <div className="space-y-1">
+                    <h3 className="text-2xl font-headline group-hover:text-emerald-500 transition-colors">{div.name}</h3>
+                    <p className="text-[9px] text-slate-500 font-bold tracking-widest uppercase italic">Division Status</p>
+                 </div>
+                 <div className="p-3 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[10px] font-bold">
+                    {div.health}%
+                 </div>
+              </div>
+              <div className="space-y-4 pt-6 border-t border-white/5">
+                 <div className="flex justify-between">
+                    <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Active Deals</span>
+                    <span className="text-[10px] font-bold text-white">{div.deals}</span>
+                 </div>
+                 <div className="flex justify-between">
+                    <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Pipeline Value</span>
+                    <span className="text-[10px] font-bold text-emerald-500">{div.value}</span>
+                 </div>
+              </div>
+           </Card>
+         ))}
+      </div>
 
-            <div className="space-y-4">
-              {deals.filter(d => d.stage === column.id).map(deal => (
-                <Card key={deal.id} className="border-none shadow-sm rounded-none bg-white p-6 group hover:shadow-md transition-all cursor-grab active:cursor-grabbing border-l-2 border-transparent hover:border-emerald-500">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-start">
-                       <h4 className="text-sm font-bold text-slate-900 group-hover:text-emerald-500 transition-colors leading-tight">{deal.title}</h4>
-                       <Badge variant="outline" className={cn(
-                         "text-[7px] uppercase font-bold tracking-widest border-slate-100",
-                         deal.priority === 'High' ? "text-red-500 bg-red-50/50" : "text-slate-400"
-                       )}>
-                         {deal.priority}
-                       </Badge>
-                    </div>
-
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center space-x-2">
-                       <User size={10} />
-                       <span>{deal.client}</span>
-                    </p>
-
-                    <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
-                       <div className="flex items-center space-x-1 text-slate-900 font-bold text-[10px]">
-                          <DollarSign size={10} className="text-emerald-500" />
-                          <span>{deal.value}</span>
-                       </div>
-                       <div className="flex items-center space-x-3">
-                          <div className="flex -space-x-2">
-                             <div className="h-6 w-6 rounded-none bg-slate-900 flex items-center justify-center text-[8px] text-white font-bold border border-white">
-                                {deal.owner[0]}
-                             </div>
-                          </div>
-                          <Clock size={12} className="text-slate-200" />
-                       </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-              
-              <button className="w-full py-4 border-2 border-dashed border-slate-50 text-slate-300 hover:border-emerald-200 hover:text-emerald-400 text-[9px] uppercase font-bold tracking-widest transition-all">
-                + Add Card
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Kanban-ish Stage Overview */}
+      <div className="flex space-x-6 overflow-x-auto pb-10 custom-scrollbar">
+         {stages.map(stage => (
+           <div key={stage.name} className="flex-shrink-0 w-80 space-y-6">
+              <div className="flex items-center justify-between px-4">
+                 <div className="flex items-center space-x-3">
+                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white">{stage.name}</h4>
+                 </div>
+                 <Badge className="bg-white/5 text-slate-500 rounded-none border-none text-[8px] font-bold">{stage.count}</Badge>
+              </div>
+              <div className="space-y-4">
+                 <div className="p-8 bg-white/[0.01] border border-dashed border-white/5 flex flex-col items-center justify-center space-y-4 hover:border-white/20 transition-all cursor-pointer group">
+                    <Plus size={20} className="text-slate-800 group-hover:text-emerald-500 transition-colors" />
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-slate-700">Add Initiative</span>
+                 </div>
+                 {[...Array(2)].map((_, i) => (
+                   <Card key={i} className="bg-white/[0.03] border-white/5 rounded-none p-6 space-y-6 hover:bg-white/[0.05] transition-all cursor-pointer">
+                      <div className="flex justify-between">
+                         <Badge className="bg-white/5 text-slate-500 rounded-none border-none text-[7px] font-bold uppercase tracking-widest">P1 Initiative</Badge>
+                         <MoreVertical size={14} className="text-slate-700 hover:text-white" />
+                      </div>
+                      <p className="text-xs font-bold leading-relaxed tracking-tight">Expansion Protocol: Terminal BGC Sub-Node</p>
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-slate-600">
+                         <div className="flex items-center">
+                            <Clock size={12} className="mr-2" />
+                            3d Left
+                         </div>
+                         <TrendingUp size={12} />
+                      </div>
+                   </Card>
+                 ))}
+                 <div className="pt-4 border-t border-white/[0.02] text-center">
+                    <p className="text-[8px] font-bold text-slate-700 uppercase tracking-widest">Stage Liquidity: {stage.value}</p>
+                 </div>
+              </div>
+           </div>
+         ))}
       </div>
     </div>
   );

@@ -23,22 +23,33 @@ import {
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
-  { name: 'HQ Overview', href: '/admin/dashboard', icon: LayoutDashboard, roles: ['SuperAdmin', 'HQOperations'] },
-  { name: 'Branch View', href: '/admin/branch', icon: Store, roles: ['SuperAdmin', 'BranchManager', 'Cashier', 'HQOperations'] },
-  { name: 'Reports & Analytics', href: '/admin/reports', icon: BarChart3, roles: ['SuperAdmin', 'Finance', 'HQOperations'] },
-  { name: 'Tasks & Handoffs', href: '/admin/tasks', icon: PackageCheck, roles: ['SuperAdmin', 'HQOperations', 'BranchManager', 'Cashier'] },
-  { name: 'Appointments', href: '/admin/appointments', icon: Calendar, roles: ['SuperAdmin', 'HQOperations', 'BranchManager', 'Cashier'] },
-  { name: 'Leads & CRM', href: '/admin/inquiries', icon: MessageSquare, roles: ['SuperAdmin', 'Marketing', 'HQOperations'] },
-  { name: 'Operations Pipelines', href: '/admin/pipelines', icon: Layers, roles: ['SuperAdmin', 'HQOperations', 'BranchManager'] },
-  { name: 'Services & Pricing', href: '/admin/services', icon: Tag, roles: ['SuperAdmin', 'Marketing', 'HQOperations'] },
-  { name: 'Promotions', href: '/admin/promos', icon: Tag, roles: ['SuperAdmin', 'Marketing'] },
-  { name: 'Package Tracker', href: '/admin/packages', icon: PackageCheck, roles: ['SuperAdmin', 'BranchManager', 'Cashier'] },
-  { name: 'Operational Vault', href: '/admin/vault', icon: Lock, roles: ['SuperAdmin', 'HQOperations', 'Finance'] },
-  { name: 'Payments', href: '/admin/payments', icon: CreditCard, roles: ['SuperAdmin', 'Finance', 'Cashier', 'HQOperations'] },
-  { name: 'Executive Approvals', href: '/admin/approvals', icon: Undo2, roles: ['SuperAdmin', 'Finance'] },
-  { name: 'Staff & Roles', href: '/admin/staff', icon: ShieldCheck, roles: ['SuperAdmin'] },
-  { name: 'Audit Logs', href: '/admin/audit', icon: History, roles: ['SuperAdmin', 'HQOperations'] },
+  { group: 'Management', items: [
+    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, roles: ['SuperAdmin', 'Executive', 'Operations'] },
+    { name: 'CRM', href: '/admin/crm', icon: Users, roles: ['SuperAdmin', 'Executive', 'Operations', 'ClientServicing'] },
+    { name: 'Organizations', href: '/admin/organizations', icon: Store, roles: ['SuperAdmin', 'Executive', 'DepartmentHead'] },
+    { name: 'Pipelines', href: '/admin/pipelines', icon: Layers, roles: ['SuperAdmin', 'Executive', 'Operations'] },
+  ]},
+  { group: 'Operations', items: [
+    { name: 'Tasks', href: '/admin/tasks', icon: PackageCheck, roles: ['SuperAdmin', 'Executive', 'Operations', 'DepartmentHead', 'FieldRunner'] },
+    { name: 'Calendar', href: '/admin/calendar', icon: Calendar, roles: ['SuperAdmin', 'Executive', 'Operations', 'DepartmentHead'] },
+    { name: 'Vault', href: '/admin/vault', icon: Lock, roles: ['SuperAdmin', 'Executive', 'Operations', 'DepartmentHead'] },
+  ]},
+  { group: 'Finance & Control', items: [
+    { name: 'Finance', href: '/admin/finance', icon: CreditCard, roles: ['SuperAdmin', 'Executive', 'Finance'] },
+    { name: 'Approvals', href: '/admin/approvals', icon: ShieldCheck, roles: ['SuperAdmin', 'Executive'] },
+  ]},
+  { group: 'Intelligence', items: [
+    { name: 'Activity', href: '/admin/activity', icon: History, roles: ['SuperAdmin', 'Executive', 'Operations'] },
+    { name: 'Reports', href: '/admin/reports', icon: BarChart3, roles: ['SuperAdmin', 'Executive', 'Operations'] },
+  ]},
+  { group: 'Administration', items: [
+    { name: 'Users', href: '/admin/users', icon: User, roles: ['SuperAdmin', 'Executive'] },
+    { name: 'Audit', href: '/admin/audit', icon: History, roles: ['SuperAdmin', 'Executive'] },
+    { name: 'Settings', href: '/admin/settings', icon: Settings, roles: ['SuperAdmin', 'Executive'] },
+  ]},
 ];
+
+import { Users, Settings, User } from 'lucide-react';
 
 interface SidebarProps {
   userRole: string | null;
@@ -49,65 +60,68 @@ interface SidebarProps {
 export function Sidebar({ userRole, onSignOut, className }: SidebarProps) {
   const pathname = usePathname();
 
-  const filteredNavItems = NAV_ITEMS.filter(item => {
-    if (!userRole) return false;
-    if (userRole === 'SuperAdmin') return true;
-    return item.roles.includes(userRole);
-  });
-
   return (
-    <aside className={cn("bg-primary border-r border-primary/10 flex flex-col shrink-0 z-20", className)}>
-      <div className="p-10">
-        <Link href="/admin/dashboard" className="block space-y-2">
-          <span className="font-headline text-2xl font-bold tracking-[0.3em] uppercase text-white block">
+    <aside className={cn("bg-slate-950 border-r border-white/5 flex flex-col shrink-0 z-20", className)}>
+      <div className="p-12 pb-8">
+        <Link href="/admin/dashboard" className="block space-y-3">
+          <span className="font-headline text-2xl font-bold tracking-[0.5em] uppercase text-white block">
             Harmony
           </span>
-          <div className="flex items-center space-x-2">
-            <span className="h-[1px] w-4 bg-emerald-500" />
-            <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-[0.4em] italic">OS</span>
+          <div className="flex items-center space-x-3">
+            <span className="h-[2px] w-8 bg-emerald-500" />
+            <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-[0.5em]">OS</span>
           </div>
         </Link>
       </div>
 
-      <nav className="flex-1 px-6 overflow-y-auto space-y-1 py-4 custom-scrollbar">
-        {filteredNavItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
+      <nav className="flex-1 px-8 overflow-y-auto space-y-12 py-8 custom-scrollbar">
+        {NAV_ITEMS.map((group) => {
+          const filteredItems = group.items.filter(item => {
+             if (!userRole) return false;
+             if (userRole === 'SuperAdmin') return true;
+             return item.roles.includes(userRole);
+          });
+
+          if (filteredItems.length === 0) return null;
+
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] transition-all group",
-                isActive 
-                  ? "bg-accent/10 text-accent border-l-2 border-accent" 
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <div className="flex items-center space-x-4">
-                <Icon size={16} className={cn(isActive ? "text-accent" : "text-slate-500 group-hover:text-slate-300")} />
-                <span>{item.name}</span>
+            <div key={group.group} className="space-y-4">
+              <h3 className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-600 px-4">
+                {group.group}
+              </h3>
+              <div className="space-y-1">
+                {filteredItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href || (item.href !== '/admin/dashboard' && pathname.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center space-x-4 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300",
+                        isActive 
+                          ? "bg-white/5 text-emerald-500 shadow-[inset_2px_0_0_0_#10b981]" 
+                          : "text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]"
+                      )}
+                    >
+                      <Icon size={14} className={cn(isActive ? "text-emerald-500" : "text-slate-700")} />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
               </div>
-              {isActive && <ChevronRight size={12} />}
-            </Link>
+            </div>
           );
         })}
       </nav>
 
-      <div className="p-8 border-t border-white/5 space-y-4">
-        <div className="bg-white/5 p-6 space-y-3">
-          <div className="flex items-center space-x-2 text-accent">
-            <TrendingUp size={14} />
-            <span className="text-[9px] font-bold uppercase tracking-widest">Growth Pulse</span>
-          </div>
-          <p className="text-[10px] text-slate-500 leading-relaxed font-bold italic">Network-wide stability: 99.9%</p>
-        </div>
+      <div className="p-8 border-t border-white/5">
         <button
           onClick={onSignOut}
-          className="w-full flex items-center space-x-4 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 hover:text-red-400 transition-colors"
+          className="w-full flex items-center space-x-4 px-4 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 hover:text-red-400 hover:bg-red-500/5 transition-all duration-300 group"
         >
-          <LogOut size={16} />
-          <span>Sign Out</span>
+          <LogOut size={16} className="group-hover:translate-x-1 transition-transform" />
+          <span>Terminate Session</span>
         </button>
       </div>
     </aside>

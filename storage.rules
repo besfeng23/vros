@@ -3,7 +3,12 @@ service firebase.storage {
   match /b/{bucket}/o {
 
     /**
-     * Harmony OS Premium Operations Platform - Storage Rules
+     * Harmony OS Intellectual Vault - Storage Security Rules
+     *
+     * PHILOSOPHY:
+     * - Sovereign Access: No broad wildcard access.
+     * - metadata-Driven: Authorization mirrors Firestore record states.
+     * - Explicit Pathing: /vault/{dept}/{type}/{id}/{file}
      */
 
     function isSignedIn() {
@@ -14,27 +19,78 @@ service firebase.storage {
       return firestore.get(/databases/(default)/documents/staffMembers/$(request.auth.uid)).data;
     }
 
-    function isAdmin() {
-      let staffData = getStaffData();
-      return staffData != null && staffData.role in ['SuperAdmin', 'HQOperations'];
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        getStaffData().role == 'SuperAdmin' || 
+        request.auth.token.role == 'SuperAdmin'
+      );
     }
 
-    // Public Assets (Services, Promos, UI)
+    function isExecutive() {
+      return isSignedIn() && (
+        getStaffData().role == 'Executive' || 
+        request.auth.token.role == 'Executive'
+      );
+    }
+
+    function getFileRecord(fileId) {
+      return firestore.get(/databases/(default)/documents/files/$(fileId)).data;
+    }
+
+    function canAccessFile(fileId) {
+      let file = getFileRecord(fileId);
+      let staff = getStaffData();
+      
+      return isSuperAdmin() || 
+             isExecutive() || 
+             (file.ownerId == request.auth.uid) ||
+             (request.auth.uid in file.sharedWith) ||
+             (file.visibility == 'Internal' && isSignedIn()) ||
+             (file.visibility == 'Department' && staff.departmentId == file.departmentId);
+    }
+
+    // --- BUCKET RULES ---
+
+    // Deny all by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Public Brand Assets
     match /public/{allPaths=**} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isSuperAdmin();
     }
 
-    // User Private Data (Profile pics, documents)
+    // Intellectual Vault
+    match /vault/{departmentId}/{recordType}/{recordId}/{fileId} {
+      
+      // Read access mirrors Firestore 'files' record visibility
+      allow read: if isSignedIn() && canAccessFile(fileId);
+      
+      // Write access (Upload/Update)
+      allow create: if isSignedIn() 
+                    && request.resource.size < 100 * 1024 * 1024 // 100MB Limit
+                    && (
+                      isSuperAdmin() || 
+                      isExecutive() || 
+                      getStaffData().departmentId == departmentId
+                    );
+      
+      allow update: if isSignedIn() && (
+        isSuperAdmin() || 
+        getFileRecord(fileId).ownerId == request.auth.uid
+      );
+
+      allow delete: if isSuperAdmin() || (
+        isSignedIn() && getFileRecord(fileId).ownerId == request.auth.uid
+      );
+    }
+
+    // System/User Assets (Not in vault)
     match /users/{userId}/{allPaths=**} {
-      allow read: if request.auth.uid == userId || isAdmin();
-      allow write: if request.auth.uid == userId || isAdmin();
-    }
-
-    // Operational Vault (Enterprise Documents)
-    match /vault/{allPaths=**} {
-      allow read: if isAdmin() || getStaffData().role in ['BranchManager', 'Finance'];
-      allow write: if isAdmin();
+      allow read: if isSignedIn() && (request.auth.uid == userId || isSuperAdmin() || isExecutive());
+      allow write: if isSignedIn() && (request.auth.uid == userId || isSuperAdmin());
     }
   }
 }

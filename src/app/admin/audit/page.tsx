@@ -1,143 +1,92 @@
+
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { History, ShieldAlert, User, Database, Globe, Search, Filter, Clock } from 'lucide-react';
-import { collection, query, onSnapshot, orderBy, limit, Timestamp } from 'firebase/firestore';
-import { useFirebase } from '@/firebase/provider';
+import React from 'react';
+import { History, Shield, Terminal, Search, Filter, HardDrive, Cpu, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LoadingState, EmptyState } from '@/components/ui/status-states';
-import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
-export default function AuditLogs() {
-  const { firestore } = useFirebase();
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!firestore) return;
-
-    const q = query(collection(firestore, 'activityLogs'), orderBy('createdAt', 'desc'), limit(100));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setLogs(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [firestore]);
-
-  const getTypeIcon = (action: string) => {
-    const a = action.toLowerCase();
-    if (a.includes('delete') || a.includes('security') || a.includes('login')) return <ShieldAlert size={12} className="text-red-500" />;
-    if (a.includes('payment') || a.includes('refund') || a.includes('price')) return <Database size={12} className="text-emerald-500" />;
-    if (a.includes('system') || a.includes('config')) return <Globe size={12} className="text-slate-400" />;
-    return <History size={12} className="text-slate-400" />;
-  };
-
-  if (loading) return <LoadingState message="Indexing System Sovereignty..." />;
+export default function AuditPage() {
+  const logs = [
+    { id: 'LOG-8821', user: 'Admin', action: 'Global Liquidity Transfer Authorized', scope: 'Finance', target: 'Division: Underground', status: 'Success', date: '2026-04-24 10:41:35Z' },
+    { id: 'LOG-8819', user: 'Patty', action: 'Client Engagement Record Updated', scope: 'CRM', target: 'Stakeholder: Alpha Group', status: 'Success', date: '2026-04-24 10:30:12Z' },
+    { id: 'LOG-8817', user: 'System', action: 'Automated Encryption Rotation', scope: 'Security', target: 'Core Vault', status: 'Success', date: '2026-04-24 10:00:00Z' },
+    { id: 'LOG-8815', user: 'Unknown', action: 'Failed Authentication Attempt', scope: 'Access', target: 'Node: Manila_HQ', status: 'Warning', date: '2026-04-24 09:45:22Z' },
+  ];
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-12 pb-20 bg-[#050505] min-h-screen -m-6 lg:-m-16 p-6 lg:p-16 text-white font-body">
       <div className="flex justify-between items-end">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-headline tracking-tight text-slate-900">System Audit Logs</h1>
-          <p className="text-slate-500 text-[10px] tracking-[0.3em] uppercase font-bold">Unalterable Chronological Record of OS Interactions</p>
+        <div className="space-y-2">
+          <h1 className="text-5xl font-headline tracking-tighter">System Audit</h1>
+          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.4em]">Irrefutable Immutable Ledger of Global Events</p>
         </div>
-        <div className="flex items-center space-x-2">
-           <Badge variant="outline" className="rounded-none px-4 py-2 border-slate-100 text-[9px] font-bold uppercase tracking-widest text-slate-400">
-             Compliance Sync: Real-Time
-           </Badge>
+        <div className="flex space-x-4">
+           <Button variant="outline" className="h-14 rounded-none border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-[0.3em] px-8 bg-emerald-500/5">
+              Secure Export
+           </Button>
         </div>
       </div>
 
-      <Card className="border-none shadow-sm rounded-none bg-white p-6">
-         <div className="flex items-center space-x-6">
-            <div className="relative flex-1">
-               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-               <input 
-                 placeholder="Search Audit Trail..." 
-                 className="w-full pl-12 h-12 bg-white border border-slate-50 text-[10px] font-bold uppercase tracking-widest focus:ring-emerald-500 focus:outline-none"
-               />
-            </div>
-            <Button variant="outline" className="h-12 px-6 rounded-none border-slate-100 text-slate-300 font-bold text-[10px] uppercase tracking-widest">
-               <Filter size={14} className="mr-2" />
-               Filter Actor
-            </Button>
-         </div>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+         {[
+           { label: 'Integrity Status', val: 'Compromise Free', color: 'text-emerald-500', icon: Shield },
+           { label: 'Event Logging', val: 'Active', color: 'text-emerald-500', icon: Terminal },
+           { label: 'Storage Node', val: 'Distributed', color: 'text-white', icon: HardDrive },
+           { label: 'Encryption Level', val: 'Elite', color: 'text-white', icon: Cpu },
+         ].map((stat, i) => (
+           <Card key={i} className="bg-white/[0.02] border-white/5 rounded-none p-8 flex items-center justify-between group">
+              <div className="space-y-2">
+                 <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{stat.label}</p>
+                 <p className={cn("text-lg font-headline", stat.color)}>{stat.val}</p>
+              </div>
+              <stat.icon size={20} className="text-slate-800 group-hover:text-emerald-500 transition-colors" />
+           </Card>
+         ))}
+      </div>
 
-      <Card className="border-none shadow-sm rounded-none bg-white overflow-hidden">
-        <Table>
-          <TableHeader className="bg-slate-900">
-            <TableRow className="border-none hover:bg-transparent">
-              <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 py-6 px-10">Event ID</TableHead>
-              <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 py-6">Actor (Credentials)</TableHead>
-              <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 py-6">Interaction Type</TableHead>
-              <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 py-6">Target Entity</TableHead>
-              <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 py-6 text-right pr-10">Timestamp (UTC)</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.length > 0 ? logs.map((log) => (
-              <TableRow key={log.id} className="border-slate-50 hover:bg-slate-50/50 transition-colors">
-                <TableCell className="font-bold text-[10px] py-8 px-10 text-slate-200">#{log.id.slice(-6).toUpperCase()}</TableCell>
-                <TableCell className="py-8">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-10 w-10 rounded-none bg-slate-50 flex items-center justify-center text-slate-300 border border-slate-100">
-                      <User size={14} />
+      <Card className="bg-white/[0.01] border-white/5 rounded-none overflow-hidden">
+         <div className="p-8 border-b border-white/5 flex gap-8 items-center bg-white/[0.02]">
+            <div className="flex-1 relative">
+               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700" size={14} />
+               <Input placeholder="Enter Scan Query..." className="pl-12 h-12 bg-transparent border-none rounded-none text-[10px] font-bold uppercase tracking-widest text-emerald-500 placeholder:text-slate-800" />
+            </div>
+            <Button variant="ghost" className="text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:text-white">Time Series</Button>
+            <Button variant="ghost" className="text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:text-white">Security Scope</Button>
+         </div>
+         <div className="flex flex-col">
+            {logs.map((log, i) => (
+              <div key={i} className="p-10 border-b border-white/[0.02] flex flex-col md:flex-row md:items-center justify-between gap-10 hover:bg-white/[0.01] transition-all group">
+                 <div className="flex items-center space-x-12">
+                    <div className="h-12 w-12 bg-white/5 border border-white/5 flex items-center justify-center text-slate-600 group-hover:text-emerald-500 transition-colors">
+                       <Terminal size={18} />
                     </div>
-                    <div className="space-y-0.5">
-                       <p className="text-sm font-bold text-slate-900">{log.userName}</p>
-                       <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest">{log.userRole}</p>
+                    <div className="space-y-2">
+                       <div className="flex items-center space-x-4">
+                          <p className="text-[10px] font-bold text-white uppercase tracking-widest">{log.user}</p>
+                          <span className="h-4 w-[1px] bg-white/10" />
+                          <p className="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">{log.scope}</p>
+                       </div>
+                       <p className="text-sm font-medium text-slate-300 tracking-tight">{log.action}</p>
+                       <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest italic">{log.target}</p>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-8">
-                   <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-slate-50/50">
-                         {getTypeIcon(log.action)}
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700">{log.action}</span>
-                   </div>
-                </TableCell>
-                <TableCell className="py-8">
-                   <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter">{log.details}</p>
-                      <p className="text-[8px] text-slate-300 font-bold uppercase tracking-tighter">{log.collection || 'General'}</p>
-                   </div>
-                </TableCell>
-                <TableCell className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right py-8 pr-10 italic">
-                  <div className="flex items-center justify-end space-x-2">
-                     <Clock size={10} />
-                     <span>
-                        {log.createdAt instanceof Timestamp ? log.createdAt.toDate().toLocaleString() : 'Recent'}
-                     </span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )) : (
-              <TableRow>
-                 <TableCell colSpan={5}>
-                    <EmptyState 
-                      title="No Events Indexed" 
-                      description="The system audit trail is currently void of activity records." 
-                      icon={History}
-                    />
-                 </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                 </div>
+
+                 <div className="text-right space-y-3">
+                    <Badge variant="outline" className={cn(
+                      "rounded-none border-none text-[8px] font-bold uppercase tracking-widest px-4",
+                      log.status === 'Warning' ? "bg-amber-500 text-white" : "bg-white/10 text-slate-400"
+                    )}>{log.status}</Badge>
+                    <p className="text-[9px] text-slate-700 font-bold uppercase tracking-widest">{log.date}</p>
+                 </div>
+              </div>
+            ))}
+         </div>
       </Card>
     </div>
   );
 }
+
+import { cn } from '@/lib/utils';

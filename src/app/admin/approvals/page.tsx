@@ -1,192 +1,89 @@
+
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React from 'react';
+import { ShieldCheck, Clock, Check, X, AlertCircle, User, Filter, ArrowRightLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  Undo2, 
-  AlertCircle, 
-  CheckCircle2, 
-  MoreHorizontal, 
-  ShieldAlert, 
-  HandMetal,
-  XCircle,
-  Clock,
-  Briefcase
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { collection, query, onSnapshot, where, orderBy } from 'firebase/firestore';
-import { useFirebase } from '@/firebase/provider';
-import { LoadingState, EmptyState } from '@/components/ui/status-states';
+import { Badge } from '@/components/ui/badge';
 
 export default function ApprovalsPage() {
-  const { firestore } = useFirebase();
-  const [approvals, setApprovals] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!firestore) return;
-
-    // Fetch pending refunds + other high-stakes actions
-    const q = query(
-      collection(firestore, 'payments'), 
-      where('status', '==', 'pending'),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setApprovals(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'Refund' })));
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [firestore]);
-
-  if (loading) return <LoadingState message="Bypassing Security Gateways..." />;
+  const requests = [
+    { id: 'REQ-101', type: 'Budget Authorization', entity: 'Operational Upgrade Alpha', requestor: 'Field Runner 02', priority: 'High', status: 'Pending', date: '4h ago' },
+    { id: 'REQ-104', type: 'Access Protocol', entity: 'Secure Vault Node #4', requestor: 'Patty', priority: 'Urgent', status: 'In Review', date: '12m ago' },
+    { id: 'REQ-107', type: 'Asset Handoff', entity: 'Case #221-B', requestor: 'Underground Ops', priority: 'Normal', status: 'Pending', date: '1d ago' },
+  ];
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-12 pb-20 bg-[#050505] min-h-screen -m-6 lg:-m-16 p-6 lg:p-16 text-white">
       <div className="flex justify-between items-end">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-headline tracking-tight text-slate-900">Executive Approvals</h1>
-          <p className="text-slate-500 text-[10px] tracking-[0.3em] uppercase font-bold">High-Stakes Transaction Authorization & Risk Mitigation</p>
+        <div className="space-y-2">
+          <h1 className="text-5xl font-headline tracking-tighter">Authorization Queue</h1>
+          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.4em]">Executive Decisioning & Protocol Validation</p>
         </div>
-        <div className="flex items-center space-x-2">
-           <Badge variant="outline" className="rounded-none px-4 py-2 border-slate-100 text-[9px] font-bold uppercase tracking-widest text-slate-400">
-             {approvals.length} Requests Pending
+        <div className="flex space-x-4">
+           <Badge className="bg-emerald-500/10 text-emerald-500 rounded-none border border-emerald-500/20 text-[8px] font-bold uppercase tracking-widest px-6 py-4">
+              99.9% Compliance Level
            </Badge>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-         <div className="space-y-8">
-            <Card className="border-none shadow-sm rounded-none bg-white p-10 space-y-8">
-               <div className="space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 text-left">Queue Integrity</p>
-                  <div className="flex items-center space-x-3 text-emerald-500">
-                     <ShieldAlert size={20} />
-                     <span className="text-2xl font-headline">Secure</span>
-                  </div>
-               </div>
-
-               <div className="space-y-6 pt-4 border-t border-slate-50">
-                  <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-900 text-left">Compliance Check</h4>
-                  <ul className="space-y-4">
-                     {[
-                       'Threshold Verification (>₱10k)',
-                       'Origin Branch Validation',
-                       'KYC/Patient Matching',
-                       'Audit Trail Continuity'
-                     ].map(check => (
-                       <li key={check} className="flex items-center space-x-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                          <CheckCircle2 size={12} className="text-emerald-500" />
-                          <span>{check}</span>
-                       </li>
-                     ))}
-                  </ul>
-               </div>
-            </Card>
-
-            <div className="p-10 bg-slate-900 text-white space-y-6">
-               <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-emerald-500 text-left">Internal Policy</h3>
-               <p className="text-[10px] leading-relaxed italic opacity-70 text-left font-bold uppercase tracking-widest">
-                 "All reversals involving third-party gateways (GCash/PayMaya) require documented proof of failure before authorization."
-               </p>
-            </div>
-         </div>
-
-         <div className="lg:col-span-3 space-y-8">
-            <Tabs defaultValue="pending" className="w-full space-y-8">
-               <TabsList className="bg-transparent border-b border-slate-100 w-full justify-start h-auto p-0 rounded-none space-x-12">
-                  <TabsTrigger value="pending" className="rounded-none border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent text-[10px] uppercase font-bold tracking-[0.2em] py-4 px-0 transition-all text-slate-400 data-[state=active]:text-slate-900">
-                     Pending Review
-                  </TabsTrigger>
-                  <TabsTrigger value="history" className="rounded-none border-b-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-transparent text-[10px] uppercase font-bold tracking-[0.2em] py-4 px-0 transition-all text-slate-400 data-[state=active]:text-slate-900">
-                     Historical Decisions
-                  </TabsTrigger>
-               </TabsList>
-
-               <TabsContent value="pending" className="space-y-6">
-                  {approvals.length > 0 ? (
-                    <Card className="border-none shadow-sm rounded-none bg-white overflow-hidden">
-                       <Table>
-                          <TableHeader className="bg-slate-50">
-                             <TableRow className="border-none hover:bg-transparent">
-                                <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 py-6 px-10">Request ID</TableHead>
-                                <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 py-6">Operational Context</TableHead>
-                                <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 py-6">Asset Value</TableHead>
-                                <TableHead className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 py-6">Timeline</TableHead>
-                                <TableHead className="text-right pr-10">Strategic Action</TableHead>
-                             </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                             {approvals.map((req) => (
-                               <TableRow key={req.id} className="border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                  <TableCell className="font-bold text-[10px] py-8 px-10 text-slate-300">#{req.id.slice(-6).toUpperCase()}</TableCell>
-                                  <TableCell className="py-8">
-                                     <div className="space-y-1">
-                                        <p className="text-sm font-headline text-slate-900">{req.clientName || 'General Settlement'}</p>
-                                        <Badge variant="outline" className="text-[7px] uppercase font-bold tracking-[0.2em] rounded-none border-emerald-100 text-emerald-600">{req.type}</Badge>
-                                     </div>
-                                  </TableCell>
-                                  <TableCell className="py-8">
-                                     <div className="space-y-1 text-left">
-                                        <p className="text-[10px] font-bold text-slate-900">₱{req.amount}</p>
-                                        <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest">{req.method || 'Standard'}</p>
-                                     </div>
-                                  </TableCell>
-                                  <TableCell className="py-8">
-                                     <div className="flex items-center text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                                        <Clock size={12} className="mr-2 text-amber-500 animate-pulse" />
-                                        Awaiting HQ
-                                     </div>
-                                  </TableCell>
-                                  <TableCell className="text-right pr-10">
-                                     <div className="flex items-center justify-end space-x-2">
-                                        <Button variant="outline" size="sm" className="rounded-none h-10 px-4 text-[8px] uppercase font-bold tracking-[0.2em] border-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
-                                           <XCircle size={14} className="mr-2" />
-                                           Reject
-                                        </Button>
-                                        <Button size="sm" className="rounded-none h-10 px-6 text-[8px] uppercase font-bold tracking-[0.2em] bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-500/10">
-                                           <CheckCircle2 size={14} className="mr-2" />
-                                           Authorize
-                                        </Button>
-                                     </div>
-                                  </TableCell>
-                               </TableRow>
-                             ))}
-                          </TableBody>
-                       </Table>
-                    </Card>
-                  ) : (
-                    <EmptyState 
-                      title="Clear Operations" 
-                      description="There are no high-stakes actions awaiting executive approval at this altitude." 
-                      icon={HandMetal}
-                    />
-                  )}
-               </TabsContent>
-
-               <TabsContent value="history">
-                  <EmptyState 
-                    title="Audit Vault Empty" 
-                    description="Decision history and compliance archives will be indexed and searchable here." 
-                    icon={Briefcase}
-                  />
-               </TabsContent>
-            </Tabs>
-         </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         {[
+           { label: 'Pending Authorizations', val: '12', color: 'text-amber-500' },
+           { label: 'Average Response Time', val: '1.4h', color: 'text-emerald-500' },
+           { label: 'Security Breaches', val: '0', color: 'text-slate-500' },
+         ].map((stat, i) => (
+           <Card key={i} className="bg-white/[0.02] border-white/5 rounded-none p-10 space-y-4">
+              <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{stat.label}</p>
+              <p className={cn("text-4xl font-headline", stat.color)}>{stat.val}</p>
+           </Card>
+         ))}
       </div>
+
+      <Card className="bg-white/[0.01] border-white/5 rounded-none overflow-hidden">
+         <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+            <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-emerald-500">Global Pending Queue</h3>
+            <Button variant="ghost" className="text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:text-white">Filter Protocol</Button>
+         </div>
+         <div className="divide-y divide-white/[0.02]">
+            {requests.map((req, i) => (
+              <div key={i} className="p-12 flex flex-col md:flex-row md:items-center justify-between gap-10 hover:bg-white/[0.01] transition-all">
+                 <div className="flex items-center space-x-12">
+                    <div className="space-y-2">
+                       <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">{req.id}</p>
+                       <h4 className="text-xl font-headline tracking-tight">{req.type}</h4>
+                       <div className="flex items-center space-x-4">
+                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{req.entity}</p>
+                          <span className="h-1 w-1 rounded-full bg-slate-800" />
+                          <p className="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">Requester: {req.requestor}</p>
+                       </div>
+                    </div>
+                 </div>
+
+                 <div className="flex items-center space-x-12">
+                    <div className="text-right space-y-2">
+                       <Badge variant="outline" className={cn(
+                         "rounded-none border-none text-[8px] font-bold uppercase tracking-widest px-3",
+                         req.priority === 'Urgent' ? "bg-red-500 text-white" : "bg-white/10 text-slate-400"
+                       )}>{req.priority} Priority</Badge>
+                       <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest">{req.date}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                       <Button className="h-14 w-14 bg-emerald-600 p-0 rounded-none shadow-xl shadow-emerald-900/20 hover:bg-emerald-500 transition-all">
+                          <Check size={20} />
+                       </Button>
+                       <Button className="h-14 w-14 bg-white/5 border border-white/5 p-0 rounded-none text-slate-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all">
+                          <X size={20} />
+                       </Button>
+                    </div>
+                 </div>
+              </div>
+            ))}
+         </div>
+      </Card>
     </div>
   );
 }
+
+import { cn } from '@/lib/utils';

@@ -114,7 +114,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   useEffect(() => {
     const fetchUserRole = async () => {
       if (!userAuthState.user || !firestore) {
-        setUserAuthState(prev => ({ ...prev, staffMember: null, userRole: 'Patient', isRoleLoading: false }));
+        setUserAuthState(prev => ({ ...prev, staffMember: null, userRole: 'Viewer', isRoleLoading: false }));
         return;
       }
 
@@ -131,11 +131,11 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
             isRoleLoading: false 
           }));
         } else {
-          // If not in staffMembers, they are a regular patient/user
+          // If not in staffMembers, they are a regular viewer
           setUserAuthState(prev => ({ 
             ...prev, 
             staffMember: null, 
-            userRole: 'Patient', 
+            userRole: 'Viewer', 
             isRoleLoading: false 
           }));
         }

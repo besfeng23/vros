@@ -40,6 +40,11 @@ export function getSdks(firebaseApp: FirebaseApp) {
   };
 }
 
+const sdks = initializeFirebase();
+export const firebaseApp = sdks.firebaseApp;
+export const auth = sdks.auth;
+export const firestore = sdks.firestore;
+
 export * from './provider';
 export * from './client-provider';
 export * from './firestore/use-collection';

@@ -1,81 +1,48 @@
 
-import { Branch, Service, Promo, Testimonial } from './types';
-import { PlaceHolderImages } from './placeholder-images';
+import { Department, Project, Deal, UserRole } from './types';
 
-const getImg = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || 'https://placehold.co/600x400';
-
-export const SERVICES: Service[] = [
+export const DEPARTMENTS: Department[] = [
   {
-    id: 's1',
-    name: 'Advanced Facial Rejuvenation',
-    slug: 'advanced-facial-rejuvenation',
-    category: 'Skincare',
-    description: 'A premium treatment focused on restoring youthful glow using medical-grade serums.',
-    imageUrl: getImg('treatment-skin'),
-    isFeatured: true
+    id: 'underground',
+    name: 'Underground',
+    headId: 'system',
+    description: 'Subterranean operations and logistics.',
+    color: '#10b981'
   },
   {
-    id: 's2',
-    name: 'Precise Medical Laser',
-    slug: 'precise-medical-laser',
-    category: 'Laser',
-    description: 'State-of-the-art laser technology for skin resurfacing and pigment correction.',
-    imageUrl: getImg('treatment-laser'),
-    isFeatured: true
+    id: 'entertainment',
+    name: 'Entertainment',
+    headId: 'system',
+    description: 'Talent, events, and media production.',
+    color: '#8b5cf6'
   },
   {
-    id: 's3',
-    name: 'Contour Sculpting',
-    slug: 'contour-sculpting',
-    category: 'Body',
-    description: 'Non-invasive body contouring designed for refined and elegant silhouettes.',
-    imageUrl: 'https://picsum.photos/seed/body1/800/600',
-    isFeatured: false
+    id: 'corporate',
+    name: 'Corporate',
+    headId: 'system',
+    description: 'Strategic planning, advisory, and HQ.',
+    color: '#3b82f6'
+  },
+  {
+    id: '88-department',
+    name: '88 Department',
+    description: 'Special operations and elite services.',
+    headId: 'system',
+    color: '#ef4444'
   }
 ];
 
-export const BRANCHES: Branch[] = [
+export const PROJECTS: Project[] = [
   {
-    id: 'b1',
-    name: 'Ortiz Clinic Makati',
-    slug: 'makati-branch',
-    address: 'Level 2, Premium Tower, Ayala Avenue, Makati City',
-    phone: '+63 2 8888 0001',
-    email: 'makati@ortizskin.com',
-    hours: 'Mon - Sun: 10:00 AM - 8:00 PM',
-    imageUrl: getImg('branch-makati'),
-    services: ['s1', 's2', 's3']
-  },
-  {
-    id: 'b2',
-    name: 'Ortiz Clinic BGC',
-    slug: 'bgc-branch',
-    address: 'High Street South, 5th Avenue, Bonifacio Global City',
-    phone: '+63 2 8888 0002',
-    email: 'bgc@ortizskin.com',
-    hours: 'Mon - Sun: 10:00 AM - 9:00 PM',
-    imageUrl: 'https://picsum.photos/seed/bgc/800/600',
-    services: ['s1', 's2']
-  }
-];
-
-export const PROMOS: Promo[] = [
-  {
-    id: 'p1',
-    title: 'The Signature Glow Package',
-    description: 'Indulge in our most sought-after facial treatment combined with medical-grade peeling.',
-    validUntil: 'December 31, 2024',
-    imageUrl: getImg('promo-banner'),
-    ctaText: 'Experience Luxury'
-  }
-];
-
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    id: 't1',
-    patientName: 'Sophia M.',
-    content: 'The most refined clinical experience I have ever had in Manila. The staff is professional and the results are truly natural.',
-    rating: 5,
-    treatment: 'Facial Rejuvenation'
+    id: 'PRJ-001',
+    name: 'Operational Refresh Alpha',
+    code: 'ORA-2026',
+    departmentId: 'corporate',
+    managerId: 'system',
+    description: 'Major infrastructure and system upgrade for Harmony OS Core.',
+    status: 'Active',
+    startDate: '2026-01-01',
+    visibility: 'Internal',
+    createdAt: '2026-01-01'
   }
 ];

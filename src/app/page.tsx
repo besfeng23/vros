@@ -5,8 +5,8 @@ import { Navbar } from '@/components/site/Navbar';
 import { Footer } from '@/components/site/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { SERVICES, BRANCHES, TESTIMONIALS } from '@/lib/data';
-import { ArrowRight, Check, Star, MapPin, ShieldCheck, Heart, Sparkles } from 'lucide-react';
+import { DEPARTMENTS, PROJECTS } from '@/lib/data';
+import { ArrowRight, Check, ShieldCheck, Sparkles, Layers, Briefcase, Globe } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -27,7 +27,7 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-3xl space-y-10 animate-fade-in-up">
+          <div className="max-w-3xl space-y-10">
             <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold tracking-[0.4em] uppercase">
               <Sparkles size={14} />
               <span>Next-Gen Enterprise OS</span>
@@ -52,47 +52,42 @@ export default function Home() {
       </section>
 
       {/* Trust Strip */}
-      <section className="py-12 bg-secondary/20 border-y border-secondary">
+      <section className="py-12 bg-slate-900 border-y border-slate-800">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-70">
-            <span className="font-headline text-xl tracking-widest uppercase italic text-center">Medically Credible</span>
-            <span className="font-headline text-xl tracking-widest uppercase italic text-center">FDA Approved</span>
-            <span className="font-headline text-xl tracking-widest uppercase italic text-center">Luxury Experience</span>
-            <span className="font-headline text-xl tracking-widest uppercase italic text-center">Board Certified</span>
+            <span className="font-headline text-sm tracking-[0.3em] uppercase italic text-center text-slate-500">Underground Ops</span>
+            <span className="font-headline text-sm tracking-[0.3em] uppercase italic text-center text-slate-500">Entertainment Elite</span>
+            <span className="font-headline text-sm tracking-[0.3em] uppercase italic text-center text-slate-500">Corporate HQ</span>
+            <span className="font-headline text-sm tracking-[0.3em] uppercase italic text-center text-slate-500">88 Department</span>
           </div>
         </div>
       </section>
 
-      {/* Featured Treatments */}
+      {/* Featured Departments */}
       <section className="py-32 bg-white">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-20">
             <div className="space-y-4 max-w-xl">
-              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-accent">Signature Portfolio</h2>
-              <p className="text-4xl md:text-5xl font-headline leading-tight">Featured Treatments for Refined Results</p>
+              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-emerald-600">The Ecosystem</h2>
+              <p className="text-4xl md:text-5xl font-headline leading-tight">Operational Divisions</p>
             </div>
-            <Link href="/services" className="mt-8 md:mt-0 flex items-center space-x-2 text-primary font-bold tracking-widest uppercase text-sm border-b border-primary/20 pb-1 hover:border-accent transition-all group">
-              <span>View All Services</span>
+            <Link href="/admin/departments" className="mt-8 md:mt-0 flex items-center space-x-2 text-slate-900 font-bold tracking-widest uppercase text-sm border-b border-slate-900/20 pb-1 hover:border-emerald-500 transition-all group">
+              <span>View Departmental View</span>
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {SERVICES.filter(s => s.isFeatured).map((service) => (
-              <div key={service.id} className="group cursor-pointer">
-                <div className="relative h-[450px] overflow-hidden mb-8">
-                  <Image 
-                    src={service.imageUrl}
-                    alt={service.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                </div>
-                <div className="space-y-3">
-                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-berry">{service.category}</span>
-                  <h3 className="text-2xl font-headline">{service.name}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{service.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            {DEPARTMENTS.map((dept) => (
+              <div key={dept.id} className="group cursor-pointer p-10 border border-slate-100 hover:border-emerald-500 transition-all">
+                <div className="h-2 w-12 bg-emerald-500 mb-8" style={{ backgroundColor: dept.color }} />
+                <div className="space-y-6">
+                   <h3 className="text-2xl font-headline group-hover:text-emerald-600 transition-colors">{dept.name}</h3>
+                   <p className="text-slate-500 text-sm leading-relaxed">{dept.description}</p>
+                   <div className="flex items-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      <Layers size={14} className="mr-2" />
+                      Protocol Established
+                   </div>
                 </div>
               </div>
             ))}
@@ -100,126 +95,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Branch Finder */}
-      <section className="py-32 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-            <div className="relative h-[600px] w-full">
-              <Image 
-                src="https://picsum.photos/seed/branchmap/800/1000"
-                alt="Clinic Interior"
-                fill
-                className="object-cover"
-                data-ai-hint="clinic interior"
-              />
-              <div className="absolute -bottom-8 -right-8 bg-white p-12 shadow-2xl hidden md:block">
-                <div className="space-y-4">
-                  <p className="text-sm font-bold tracking-widest uppercase text-accent">Our Presence</p>
-                  <p className="text-2xl font-headline">Visit an Ortiz Clinic near you</p>
-                  <Button variant="link" className="p-0 h-auto font-bold uppercase tracking-widest text-xs">
-                    Locate Branches <ArrowRight size={14} className="ml-2" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-12">
-              <div className="space-y-4">
-                <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-accent">Strategic Locations</h2>
-                <p className="text-4xl md:text-5xl font-headline leading-tight">Accessible Luxury Across Metro Manila</p>
-              </div>
-              <div className="space-y-8">
-                {BRANCHES.map(branch => (
-                  <div key={branch.id} className="group border-b border-muted pb-8 hover:border-accent transition-colors">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-2">
-                        <h4 className="text-xl font-headline group-hover:text-accent transition-colors">{branch.name}</h4>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <MapPin size={14} className="mr-2" />
-                          {branch.address}
-                        </div>
-                      </div>
-                      <Button asChild variant="outline" size="sm" className="rounded-none border-primary">
-                        <Link href={`/branches/${branch.slug}`}>Details</Link>
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Ortiz / Doctor Credibility */}
-      <section className="py-32 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-6 text-center max-w-4xl mx-auto space-y-16">
+      {/* Why Harmony OS */}
+      <section className="py-32 bg-slate-950 text-white">
+        <div className="container mx-auto px-6 text-center max-w-4xl space-y-16">
           <div className="space-y-6">
-            <h2 className="text-sm font-bold tracking-[0.4em] uppercase text-accent">The Ortiz Standard</h2>
-            <p className="text-4xl md:text-6xl font-headline leading-tight">Where Science Meets Artistry</p>
+            <h2 className="text-sm font-bold tracking-[0.4em] uppercase text-emerald-500">The Protocol</h2>
+            <p className="text-4xl md:text-6xl font-headline leading-tight">Engineered for Absolute Sovereignty</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
             <div className="space-y-4">
-              <ShieldCheck className="text-accent h-10 w-10" />
-              <h4 className="text-xl font-headline">Medical Credibility</h4>
-              <p className="text-sm text-primary-foreground/60 leading-relaxed">Every treatment is overseen by board-certified dermatologists and medical professionals.</p>
+              <ShieldCheck className="text-emerald-500 h-10 w-10" />
+              <h4 className="text-xl font-headline">End-to-End Encryption</h4>
+              <p className="text-sm text-slate-400 leading-relaxed">Strategic data stays consolidated and protected behind elite-grade security protocols.</p>
             </div>
             <div className="space-y-4">
-              <Sparkles className="text-accent h-10 w-10" />
-              <h4 className="text-xl font-headline">Quiet Luxury</h4>
-              <p className="text-sm text-primary-foreground/60 leading-relaxed">Our clinics are designed as havens of calm, prioritizing privacy and premium comfort.</p>
+              <Globe className="text-emerald-500 h-10 w-10" />
+              <h4 className="text-xl font-headline">Global Scalability</h4>
+              <p className="text-sm text-slate-400 leading-relaxed">Scale across divisions, territories, and industries with no operational friction.</p>
             </div>
             <div className="space-y-4">
-              <Heart className="text-accent h-10 w-10" />
-              <h4 className="text-xl font-headline">Bespoke Care</h4>
-              <p className="text-sm text-primary-foreground/60 leading-relaxed">No generic templates. Every patient journey is tailored to individual skin DNA and goals.</p>
+              <Briefcase className="text-emerald-500 h-10 w-10" />
+              <h4 className="text-xl font-headline">Quiet Efficiency</h4>
+              <p className="text-sm text-slate-400 leading-relaxed">Automation handles the noise so the leadership can focus on high-stakes execution.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-32 bg-background overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-accent mb-4">Patient Voices</h2>
-            <p className="text-4xl md:text-5xl font-headline">The Proof is in the Results</p>
-          </div>
-          <div className="flex justify-center">
-            {TESTIMONIALS.map(t => (
-              <div key={t.id} className="max-w-2xl bg-white p-16 shadow-lg text-center space-y-8">
-                <div className="flex justify-center space-x-1">
-                  {[...Array(t.rating)].map((_, i) => <Star key={i} size={16} fill="#D8BC78" className="text-accent" />)}
-                </div>
-                <p className="text-2xl font-headline italic leading-relaxed text-muted-foreground">
-                  "{t.content}"
-                </p>
-                <div className="pt-4">
-                  <p className="font-bold tracking-widest uppercase text-sm">{t.patientName}</p>
-                  <p className="text-accent text-xs tracking-widest uppercase mt-1">{t.treatment}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Book Now CTA */}
-      <section className="py-40 relative overflow-hidden bg-background">
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="https://picsum.photos/seed/ctabg/1920/1080"
-            alt="Clinic Detail"
-            fill
-            className="object-cover opacity-10"
-          />
-        </div>
+      {/* Command Center CTA */}
+      <section className="py-40 relative overflow-hidden bg-slate-50">
         <div className="container mx-auto px-6 relative z-10 text-center space-y-12">
           <div className="space-y-4">
-            <h2 className="text-5xl md:text-7xl font-headline max-w-4xl mx-auto leading-tight">Begin Your Journey to <span className="italic">Radiance</span></h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">Appointments are available at all our branches. Select your preferred location to begin.</p>
+            <h2 className="text-5xl md:text-7xl font-headline max-w-4xl mx-auto leading-tight">Ready for <span className="italic text-emerald-600">Harmony</span></h2>
+            <p className="text-lg text-slate-500 max-w-xl mx-auto uppercase tracking-widest text-[10px] font-bold">Authorized Personnel Only - Biometric Access Active</p>
           </div>
-          <Button asChild size="lg" className="rounded-none px-16 h-16 text-lg tracking-widest uppercase bg-primary hover:bg-primary/90">
-            <Link href="/book">Reserve Now</Link>
+          <Button asChild size="lg" className="rounded-none px-16 h-16 text-[10px] tracking-[0.3em] font-bold uppercase bg-slate-900 hover:bg-slate-800 text-white shadow-2xl">
+            <Link href="/admin/dashboard">Initial Login Sequence</Link>
           </Button>
         </div>
       </section>

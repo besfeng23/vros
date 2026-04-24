@@ -1,4 +1,4 @@
-import { firestore } from '@/firebase/config';
+import { firestore } from '@/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { UserRole } from './types';
 
@@ -10,7 +10,7 @@ export interface AuditLogParams {
   details: string;
   collection?: string;
   docId?: string;
-  branchId?: string;
+  departmentId?: string;
 }
 
 /**

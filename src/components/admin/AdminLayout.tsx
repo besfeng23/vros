@@ -26,12 +26,12 @@ import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { useUser } from '@/firebase/provider';
+import { useUser, useFirebase } from '@/firebase/provider';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Sidebar } from './Sidebar';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, userRole, auth } = useUser();
+  const { user, userRole, auth } = useFirebase();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -42,7 +42,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ProtectedRoute allowedRoles={['SuperAdmin', 'HQOperations', 'BranchManager', 'Cashier', 'Marketing', 'Finance']} redirectPath="/admin">
+    <ProtectedRoute allowedRoles={['SuperAdmin', 'Executive', 'Operations', 'Finance', 'DepartmentHead', 'TalentManager', 'ClientServicing', 'FieldRunner']} redirectPath="/admin">
       <div className="flex h-screen bg-[#FDFCF9] overflow-hidden font-body text-slate-900">
         {/* Desktop Sidebar */}
         <Sidebar 
@@ -94,7 +94,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                         <AvatarImage src={user.photoURL} />
                       ) : (
                         <AvatarFallback className="bg-emerald-500 text-white font-headline text-[10px]">
-                          {(user?.displayName || 'HA').split(' ').map(n => n[0]).join('').toUpperCase()}
+                          {(user?.displayName || 'HA').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                         </AvatarFallback>
                       )}
                     </Avatar>
